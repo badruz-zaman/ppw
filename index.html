@@ -3,295 +3,299 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tugas PPW - Pengantar Web Mining</title>
+  <title>Pengantar Web Mining — Badruz Zaman</title>
   <style>
-    :root {
-      --primary: #1e3a8a;
-      --primary-light: #3b82f6;
-      --text-main: #1f2937;
-      --text-muted: #4b5563;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --accent-badge: #eff6ff;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap');
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.7;
-      color: var(--text-main);
-      background-color: var(--bg);
-      padding: 40px 20px;
+      font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+      color: #222;
+      background: #faf9f7;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .container {
-      max-width: 860px;
+    /* ——— Top bar ——— */
+    .topbar {
+      border-bottom: 1px solid #e0ddd8;
+      padding: 14px 0;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      background: #faf9f7;
+    }
+
+    /* ——— Hero ——— */
+    .hero {
+      max-width: 640px;
       margin: 0 auto;
+      padding: 72px 24px 40px;
+      text-align: center;
     }
 
-    header {
-      margin-bottom: 28px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      font-size: 0.85rem;
+    .hero h1 {
+      font-size: 2.6rem;
       font-weight: 600;
-      color: var(--primary);
-      background-color: var(--accent-badge);
-      border-radius: 9999px;
-      margin-bottom: 12px;
+      line-height: 1.2;
+      color: #111;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
     }
 
-    h1 {
-      font-size: 2.1rem;
-      font-weight: 800;
-      color: #0f172a;
+    .hero .subtitle {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: #bbb;
+      margin: 36px auto;
+    }
+
+    /* ——— Author info ——— */
+    .author {
+      text-align: center;
+      padding-bottom: 48px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .author .name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .author .meta {
+      font-size: 0.78rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .author .meta a {
+      color: #999;
+      text-decoration: none;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .author .meta a:hover {
+      color: #555;
+    }
+
+    /* ——— Main content ——— */
+    .content {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .content h2 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: #111;
+      margin: 48px 0 14px;
       line-height: 1.3;
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-
-    /* Profil Grid */
-    .profile-card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 16px;
-      color: var(--primary);
-      border-bottom: 2px solid #e0e7ff;
-      padding-bottom: 8px;
-    }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    .profile-item {
-      background: #f1f5f9;
-      padding: 12px 16px;
-      border-radius: 8px;
-    }
-
-    .profile-item span {
-      display: block;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .profile-item strong {
-      font-size: 1rem;
-      color: #0f172a;
-    }
-
-    /* Konten Artikel */
-    article h2 {
-      font-size: 1.45rem;
-      margin: 28px 0 12px 0;
-      color: #0f172a;
-    }
-
-    article h2:first-of-type {
+    .content h2:first-child {
       margin-top: 0;
     }
 
-    article h3 {
-      font-size: 1.15rem;
-      margin: 20px 0 8px 0;
-      color: var(--primary);
+    .content h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #555;
+      margin: 32px 0 10px;
     }
 
-    article p {
-      margin-bottom: 14px;
+    .content p {
+      font-size: 1.08rem;
+      line-height: 1.85;
+      margin-bottom: 18px;
       text-align: justify;
+      color: #333;
     }
 
-    .taxonomy-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin: 20px 0;
+    .content em {
+      font-style: italic;
     }
 
-    .taxonomy-box {
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--primary-light);
-      padding: 16px;
-      border-radius: 6px;
-      background: #fcfcfd;
+    .content strong {
+      font-weight: 600;
     }
 
-    .taxonomy-box h4 {
-      font-size: 1.05rem;
-      color: #0f172a;
+    /* ——— Taxonomy items ——— */
+    .taxonomy-item {
+      margin: 24px 0;
+      padding-left: 20px;
+      border-left: 2px solid #ccc;
+    }
+
+    .taxonomy-item h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #222;
       margin-bottom: 6px;
     }
 
-    .taxonomy-box p {
+    .taxonomy-item p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #555;
       margin-bottom: 0;
-      font-size: 0.95rem;
-      color: var(--text-muted);
     }
 
-    ul, ol {
-      margin-left: 24px;
-      margin-bottom: 16px;
+    /* ——— Lists ——— */
+    .content ol {
+      padding-left: 24px;
+      margin-bottom: 20px;
     }
 
-    li {
-      margin-bottom: 6px;
+    .content ol li {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 10px;
+      color: #333;
+      padding-left: 4px;
     }
 
-    /* Daftar Pustaka */
+    .content ol li::marker {
+      color: #999;
+      font-weight: 600;
+    }
+
+    /* ——— References ——— */
     .references {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding-top: 20px;
-      margin-top: 32px;
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid #ddd;
     }
 
     .references h3 {
-      color: #0f172a;
-      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 16px;
     }
 
     .references ol {
       padding-left: 20px;
     }
 
-    .references li {
-      margin-bottom: 8px;
+    .references ol li {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: #666;
+      margin-bottom: 10px;
     }
 
+    /* ——— Footer ——— */
     footer {
       text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 24px;
+      padding: 32px 24px 48px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: #bbb;
+      letter-spacing: 0.04em;
+    }
+
+    /* ——— Responsive ——— */
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 28px; }
+      .hero h1 { font-size: 1.9rem; }
+      .content { padding: 0 20px 48px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    
-    <header>
-      <span class="badge">Repository Pencarian dan Penambangan Web</span>
-      <h1>Pengantar Web Mining</h1>
-    </header>
+  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
 
-    <!-- Kartu Profil -->
-    <section class="card profile-card">
-      <h2>Profil Mahasiswa</h2>
-      <div class="profile-grid">
-        <div class="profile-item">
-          <span>Nama Lengkap</span>
-          <!-- Ganti dengan nama aslimu -->
-          <strong>Badruz Zaman Ash Sholih</strong>
-        </div>
-        <div class="profile-item">
-          <span>NPM</span>
-          <!-- Ganti dengan NPM aslimu -->
-          <strong>240411100140</strong>
-        </div>
-        <div class="profile-item">
-          <span>Email</span>
-          <!-- Ganti dengan email kampus/pribadimu -->
-          <strong>badruzzamannnnn@gmail.com</strong>
-        </div>
-      </div>
-    </section>
-
-    <!-- Konten Materi Ilmiah -->
-    <article class="card">
-      <h2>1. Konsep Dasar Web Mining</h2>
-      <p>
-        <strong>Web Mining</strong> didefinisikan sebagai pemanfaatan teknik <em>data mining</em> secara otomatis untuk menemukan, mengekstraksi, dan memahami pola serta informasi tersembunyi dari dokumen, layanan, dan repositori World Wide Web (Liu, 2011). 
-      </p>
-      <p>
-        Web merupakan ekosistem data yang sangat besar, heterogen, dinamis, dan sebagian besar bersifat tidak terstruktur (<em>unstructured data</em>). Karakteristik inilah yang membedakan Web Mining dari data mining konvensional yang umumnya beroperasi pada basis data terstruktur (relasional).
-      </p>
-
-      <h2>2. Taksonomi Web Mining</h2>
-      <p>
-        Berdasarkan literatur ilmiah (Kosala & Blockeel, 2000), Web Mining diklasifikasikan ke dalam tiga domain utama:
-      </p>
-
-      <div class="taxonomy-grid">
-        <div class="taxonomy-box">
-          <h4>A. Web Content Mining (WCM)</h4>
-          <p>
-            Fokus pada penambangan dan ekstraksi informasi dari konten nyata halaman web (berupa teks terstruktur/tak terstruktur, gambar, audio, maupun video). Bidang ini mengintegrasikan teknik <em>Natural Language Processing</em> (NLP), <em>Information Retrieval</em> (IR), serta klasifikasi dan klasterisasi teks.
-          </p>
-        </div>
-
-        <div class="taxonomy-box">
-          <h4>B. Web Structure Mining (WSM)</h4>
-          <p>
-            Menganalisis topologi hubungan dan skema keterkaitan antar dokumen web melalui representasi <em>hyperlink</em>. Dua algoritma paling fundamental pada kategori ini adalah <strong>PageRank</strong> (Brin & Page) dan <strong>HITS</strong> (Kleinberg), yang mengukur otoritas serta popularitas suatu halaman berdasarkan graf tautannya.
-          </p>
-        </div>
-
-        <div class="taxonomy-box">
-          <h4>C. Web Usage Mining (WUM)</h4>
-          <p>
-            Meneliti jejak interaksi pengguna dengan server web. Data utamanya bersumber dari riwayat log server (<em>server access logs</em>), sesi interaksi, registrasi, dan <em>clickstream</em>. Tujuannya meliputi analisis perilaku pengguna, personalisasi konten, dan sistem rekomendasi (Cooley et al., 1999).
-          </p>
-        </div>
-      </div>
-
-      <h2>3. Siklus Proses Web Mining</h2>
-      <p>Secara umum, proses penambangan web melibatkan alur sistematis berikut:</p>
-      <ol>
-        <li><strong>Pengumpulan Sumber Data (Data Gathering):</strong> Crawling dan scraping dokumen dari internet.</li>
-        <li><strong>Pra-pemrosesan Data (Preprocessing):</strong> Pembersihan tagging HTML, tokenisasi kata, <em>filtering</em> (stopword removal), <em>stemming</em>, serta parsing log.</li>
-        <li><strong>Penerapan Algoritma (Pattern Discovery):</strong> Penggunaan algoritma asosiasi, klasifikasi, regresi, atau klasterisasi.</li>
-        <li><strong>Evaluasi & Interpretasi (Pattern Analysis):</strong> Validasi pola yang ditemukan untuk menarik kesimpulan yang relevan bagi pengambilan keputusan.</li>
-      </ol>
-
-      <!-- Daftar Pustaka Resmi -->
-      <div class="references">
-        <h3>Referensi & Daftar Pustaka</h3>
-        <ol>
-          <li>
-            Liu, B. (2011). <em>Web Data Mining: Exploring Hyperlinks, Contents, and Usage Data</em> (2nd ed.). Springer-Verlag Berlin Heidelberg.
-          </li>
-          <li>
-            Kosala, R., & Blockeel, H. (2000). Web mining research: A survey. <em>ACM SIGKDD Explorations Newsletter</em>, 2(1), 1–15.
-          </li>
-          <li>
-            Cooley, R., Mobasher, B., & Srivastava, J. (1999). Data preparation for mining World Wide Web browsing patterns. <em>Knowledge and Information Systems</em>, 1(1), 5–32.
-          </li>
-          <li>
-            Han, J., Kamber, M., & Pei, J. (2011). <em>Data Mining: Concepts and Techniques</em> (3rd ed.). Morgan Kaufmann.
-          </li>
-        </ol>
-      </div>
-    </article>
-
-    <footer>
-      <p>&copy; 2026 - Repositori Pencarian dan Penambangan Web </p>
-    </footer>
-
+  <div class="hero">
+    <h1>Pengantar Web Mining</h1>
+    <p class="subtitle">Konsep, taksonomi, dan proses penambangan informasi dari ekosistem World Wide Web.</p>
   </div>
+
+  <div class="divider"></div>
+
+  <div class="author">
+    <div class="name">Badruz Zaman Ash Sholih</div>
+    <div class="meta">240411100140 · <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
+  </div>
+
+  <main class="content">
+
+    <h2>Konsep Dasar</h2>
+    <p>
+      <strong>Web Mining</strong> adalah pemanfaatan teknik <em>data mining</em> secara otomatis untuk menemukan, mengekstraksi, dan memahami pola serta informasi tersembunyi dari dokumen, layanan, dan repositori World Wide Web (Liu, 2011).
+    </p>
+    <p>
+      Web merupakan ekosistem data yang sangat besar, heterogen, dinamis, dan sebagian besar bersifat tidak terstruktur. Karakteristik inilah yang membedakannya dari data mining konvensional yang umumnya beroperasi pada basis data relasional.
+    </p>
+
+    <h2>Taksonomi</h2>
+    <p>
+      Berdasarkan literatur ilmiah (Kosala &amp; Blockeel, 2000), Web Mining diklasifikasikan ke dalam tiga domain utama:
+    </p>
+
+    <div class="taxonomy-item">
+      <h4>Web Content Mining</h4>
+      <p>
+        Penambangan dan ekstraksi informasi dari konten halaman web — teks, gambar, audio, maupun video. Mengintegrasikan teknik <em>Natural Language Processing</em>, <em>Information Retrieval</em>, serta klasifikasi dan klasterisasi teks.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Web Structure Mining</h4>
+      <p>
+        Menganalisis topologi hubungan antar dokumen web melalui representasi <em>hyperlink</em>. Algoritma fundamental di bidang ini adalah <strong>PageRank</strong> dan <strong>HITS</strong>, yang mengukur otoritas suatu halaman berdasarkan graf tautannya.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Web Usage Mining</h4>
+      <p>
+        Meneliti jejak interaksi pengguna dengan server web. Sumber datanya meliputi log server, sesi interaksi, dan <em>clickstream</em>. Tujuannya mencakup analisis perilaku pengguna, personalisasi konten, dan sistem rekomendasi (Cooley et al., 1999).
+      </p>
+    </div>
+
+    <h2>Siklus Proses</h2>
+    <p>Secara umum, penambangan web mengikuti alur sistematis berikut:</p>
+    <ol>
+      <li><strong>Pengumpulan Data</strong> — crawling dan scraping dokumen dari internet.</li>
+      <li><strong>Pra-pemrosesan</strong> — pembersihan HTML, tokenisasi, <em>stopword removal</em>, <em>stemming</em>, dan parsing log.</li>
+      <li><strong>Penerapan Algoritma</strong> — asosiasi, klasifikasi, regresi, atau klasterisasi untuk menemukan pola.</li>
+      <li><strong>Evaluasi &amp; Interpretasi</strong> — validasi pola yang ditemukan untuk pengambilan keputusan.</li>
+    </ol>
+
+    <div class="references">
+      <h3>Daftar Pustaka</h3>
+      <ol>
+        <li>Liu, B. (2011). <em>Web Data Mining: Exploring Hyperlinks, Contents, and Usage Data</em> (2nd ed.). Springer-Verlag.</li>
+        <li>Kosala, R., &amp; Blockeel, H. (2000). Web mining research: A survey. <em>ACM SIGKDD Explorations Newsletter</em>, 2(1), 1–15.</li>
+        <li>Cooley, R., Mobasher, B., &amp; Srivastava, J. (1999). Data preparation for mining World Wide Web browsing patterns. <em>Knowledge and Information Systems</em>, 1(1), 5–32.</li>
+        <li>Han, J., Kamber, M., &amp; Pei, J. (2011). <em>Data Mining: Concepts and Techniques</em> (3rd ed.). Morgan Kaufmann.</li>
+      </ol>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman</footer>
 
 </body>
 </html>
