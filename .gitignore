@@ -1,0 +1,19 @@
+# Virtual Environments & Anaconda
+enWebmining/
+anaconda_projects/
+env/
+venv/
+ENV/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+.virtual_documents/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary / OS files
+.DS_Store
+Thumbs.db

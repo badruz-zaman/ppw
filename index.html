@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengantar Web Mining — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
+  <nav class="navbar">
+    <a href="index.html" class="nav-link active">Beranda</a> <a href="crawling.html" class="nav-link">Data Crawling</a> <a href="tfidf.html" class="nav-link">TF-IDF Testing</a> <a href="pca.html" class="nav-link">PCA Testing</a>
+  </nav>
+
+  <div class="hero">
+    <h1>Pengantar Web Mining</h1>
+    <p class="subtitle">Konsep, taksonomi, dan proses penambangan informasi dari ekosistem World Wide Web.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="author">
+    <div class="name">Badruz Zaman Ash Sholih</div>
+    <div class="meta">240411100140 · <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
+  </div>
+
+  <main class="content content-narrow">
+
+    <h2>Konsep Dasar</h2>
+    <p>
+      <strong>Web Mining</strong> adalah pemanfaatan teknik <em>data mining</em> secara otomatis untuk menemukan, mengekstraksi, dan memahami pola serta informasi tersembunyi dari dokumen, layanan, dan repositori World Wide Web (Liu, 2011).
+    </p>
+    <p>
+      Web merupakan ekosistem data yang sangat besar, heterogen, dinamis, dan sebagian besar bersifat tidak terstruktur. Karakteristik inilah yang membedakannya dari data mining konvensional yang umumnya beroperasi pada basis data relasional.
+    </p>
+
+    <h2>Taksonomi</h2>
+    <p>
+      Berdasarkan literatur ilmiah (Kosala &amp; Blockeel, 2000), Web Mining diklasifikasikan ke dalam tiga domain utama:
+    </p>
+
+    <div class="taxonomy-item">
+      <h4>Web Content Mining</h4>
+      <p>
+        Penambangan dan ekstraksi informasi dari konten halaman web — teks, gambar, audio, maupun video. Mengintegrasikan teknik <em>Natural Language Processing</em>, <em>Information Retrieval</em>, serta klasifikasi dan klasterisasi teks.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Web Structure Mining</h4>
+      <p>
+        Menganalisis topologi hubungan antar dokumen web melalui representasi <em>hyperlink</em>. Algoritma fundamental di bidang ini adalah <strong>PageRank</strong> dan <strong>HITS</strong>, yang mengukur otoritas suatu halaman berdasarkan graf tautannya.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Web Usage Mining</h4>
+      <p>
+        Meneliti jejak interaksi pengguna dengan server web. Sumber datanya meliputi log server, sesi interaksi, dan <em>clickstream</em>. Tujuannya mencakup analisis perilaku pengguna, personalisasi konten, dan sistem rekomendasi (Cooley et al., 1999).
+      </p>
+    </div>
+
+    <h2>Siklus Proses</h2>
+    <p>Secara umum, penambangan web mengikuti alur sistematis berikut:</p>
+    <ol>
+      <li><strong>Pengumpulan Data</strong> — crawling dan scraping dokumen dari internet.</li>
+      <li><strong>Pra-pemrosesan</strong> — pembersihan HTML, tokenisasi, <em>stopword removal</em>, <em>stemming</em>, dan parsing log.</li>
+      <li><strong>Penerapan Algoritma</strong> — asosiasi, klasifikasi, regresi, atau klasterisasi untuk menemukan pola.</li>
+      <li><strong>Evaluasi &amp; Interpretasi</strong> — validasi pola yang ditemukan untuk pengambilan keputusan.</li>
+    </ol>
+
+    <h2>Tahapan Praktikum &amp; Dataset</h2>
+    <p>Pilih halaman di bawah ini untuk melihat data dan hasil komputasi pada masing-masing tahapan:</p>
+
+    <div class="grid-cards">
+      <a href="crawling.html" class="card-nav">
+        <span class="badge-stage">Tahap 1 · Crawling</span>
+        <h3>Data Berita Detik.com</h3>
+        <p>200 data artikel berita (100 kategori sport &amp; 100 kategori finance).</p>
+      </a>
+
+      <a href="tfidf.html" class="card-nav">
+        <span class="badge-stage">Tahap 2 · Vektorisasi</span>
+        <h3>TF-IDF Testing</h3>
+        <p>Matriks pembobotan kata 40 data testing × 7.424 kata unik (vocabulary).</p>
+      </a>
+
+      <a href="pca.html" class="card-nav">
+        <span class="badge-stage">Tahap 3 · Reduksi</span>
+        <h3>PCA Testing</h3>
+        <p>Hasil reduksi dimensi 40 data testing menjadi 160 Principal Components.</p>
+      </a>
+    </div>
+
+    <div class="references">
+      <h3>Daftar Pustaka</h3>
+      <ol>
+        <li>Liu, B. (2011). <em>Web Data Mining: Exploring Hyperlinks, Contents, and Usage Data</em> (2nd ed.). Springer-Verlag.</li>
+        <li>Kosala, R., &amp; Blockeel, H. (2000). Web mining research: A survey. <em>ACM SIGKDD Explorations Newsletter</em>, 2(1), 1–15.</li>
+        <li>Cooley, R., Mobasher, B., &amp; Srivastava, J. (1999). Data preparation for mining World Wide Web browsing patterns. <em>Knowledge and Information Systems</em>, 1(1), 5–32.</li>
+        <li>Han, J., Kamber, M., &amp; Pei, J. (2011). <em>Data Mining: Concepts and Techniques</em> (3rd ed.). Morgan Kaufmann.</li>
+      </ol>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+
+</body>
+</html>

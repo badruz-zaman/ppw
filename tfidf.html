@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembobotan TF-IDF Testing — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
+  <nav class="navbar">
+    <a href="index.html" class="nav-link">Beranda</a> <a href="crawling.html" class="nav-link">Data Crawling</a> <a href="tfidf.html" class="nav-link active">TF-IDF Testing</a> <a href="pca.html" class="nav-link">PCA Testing</a>
+  </nav>
+
+  <main class="content">
+
+    <h2>TF-IDF Tanpa Reduksi Dimensi (Data Testing)</h2>
+    <p>
+      Berikut merupakan representasi matriks pembobotan kata menggunakan metode <strong>TF-IDF</strong> tanpa reduksi dimensi untuk <strong>data testing</strong> (40 data dokumen berita dan 7.424 kata kosakata unik / <em>vocabulary</em>):
+    </p>
+
+    <div class="download-card">
+      <div class="download-info">
+        <strong>Dataset Lengkap:</strong> 40 baris × 7.426 kolom (7.424 fitur kata unik)
+      </div>
+      <div class="download-actions">
+        <a href="03_tfidf/tfidf_testing.xlsx" class="btn-download" download>📥 Download .xlsx</a>
+        <a href="03_tfidf/tfidf_testing.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table matrix-table">
+        <thead>
+          <tr><th class="col-matrix-id">ID</th><th>aadi</th><th>aam</th><th>aan</th><th>aau</th><th>abadi</th><th>abang</th><th>abangpalmerah</th><th>abdi</th><th>abdul</th><th>abdullah</th><th class="col-ellipsis">... [7.414 kata lainnya] ...</th><th class="col-matrix-label">Label</th></tr>
+        </thead>
+        <tbody>
+<tr><td class="col-matrix-id">38</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">141</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">196</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">197</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">24</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">105</td><td>0.0373</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">181</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0501</td><td>0.0501</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">162</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0803</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">87</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">108</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">198</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">128</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">92</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">15</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">172</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">53</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">88</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">135</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">72</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">148</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">123</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">107</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">144</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">173</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">112</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">85</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">134</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">21</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">137</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">93</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">75</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">83</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">61</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">3</td><td>0</td><td>0</td><td>0</td><td>0.0396</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">64</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">52</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+<tr><td class="col-matrix-id">133</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
+<tr><td class="col-matrix-id">22</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="preview-note">
+      * Menampilkan sampel 10 kata representatif pertama dan kolom label. Seluruh 7.424 fitur kata lengkap dapat diunduh melalui tombol Excel/CSV di atas.
+    </p>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+
+</body>
+</html>
