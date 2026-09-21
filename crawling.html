@@ -8,25 +8,33 @@
 </head>
 <body>
 
-  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
-  <nav class="navbar">
-    <a href="index.html" class="nav-link">Beranda</a> <a href="crawling.html" class="nav-link active">Data Crawling</a> <a href="tfidf.html" class="nav-link">TF-IDF Testing</a> <a href="pca.html" class="nav-link">PCA Testing</a>
-  </nav>
+  <div class="page-header">
+    <h1>Data Crawling Berita</h1>
+    <p class="subtitle">Pengumpulan data mentah dari portal berita Detik.com secara otomatis</p>
+  </div>
 
   <main class="content">
 
-    <h2>Data Hasil Crawling Berita Detik.com</h2>
-    <p>
-      Berikut merupakan dataset berita hasil penambangan data (<em>web scraping/crawling</em>) dari portal Detik.com yang terdiri atas <strong>200 data artikel berita</strong> (100 berita kategori <strong>sport</strong> dan 100 berita kategori <strong>finance</strong>):
-    </p>
+    <div class="narasi">
+      <span class="narasi-label">Tentang Proses Ini</span>
+      <p>
+        Tahap pertama dalam proses web mining adalah <strong>pengumpulan data mentah</strong> dari sumber yang relevan. Dalam praktikum ini, data dikumpulkan dari portal berita <strong>Detik.com</strong> &mdash; salah satu situs berita daring terbesar di Indonesia &mdash; menggunakan teknik <em>web crawling</em> secara otomatis.
+      </p>
+      <p>
+        Proses crawling memanfaatkan <strong>Selenium WebDriver</strong> untuk mengendalikan browser secara programatis dan <strong>BeautifulSoup</strong> untuk mem-parsing struktur HTML halaman berita. Secara otomatis, program mengunjungi halaman-halaman berita pada dua kategori yang dipilih &mdash; <em>Sport</em> dan <em>Finance</em> &mdash; lalu mengekstraksi isi teks lengkap setiap artikel.
+      </p>
+      <p>
+        Hasilnya berupa <strong>200 artikel berita mentah</strong> (100 dari kategori Sport dan 100 dari kategori Finance) yang tersimpan dalam format tabular dengan tiga kolom: nomor identifikasi (ID), isi lengkap berita, dan label kategori. Dataset inilah yang menjadi bahan baku untuk seluruh tahapan analisis selanjutnya.
+      </p>
+    </div>
 
     <div class="download-card">
       <div class="download-info">
-        <strong>File Mentah Crawling:</strong> 200 baris × 3 kolom (id, isi_berita, label)
+        <strong>Dataset Crawling:</strong> 200 baris &times; 3 kolom (id, isi_berita, label)
       </div>
       <div class="download-actions">
-        <a href="01_crawling/data_berita_detik.xlsx" class="btn-download" download>📥 Download .xlsx</a>
-        <a href="01_crawling/data_berita_detik.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
+        <a href="01_crawling/data_berita_detik.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+        <a href="01_crawling/data_berita_detik.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
       </div>
     </div>
 
@@ -3393,7 +3401,22 @@ Tonton juga video &quot;Kejagung Pamerkan Uang Rp 401 M Hasil Sitaan Korupsi Nik
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+    <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
+    <a href="crawling.html" class="fab-item active" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
+    <a href="tfidf.html" class="fab-item" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
+    <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
+    <a href="eksperimen.html" class="fab-item" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <span class="fab-icon-open">☰</span>
+      <span class="fab-icon-close">✕</span>
+    </button>
+  </div>
 </body>
 </html>

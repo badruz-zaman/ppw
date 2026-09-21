@@ -3,89 +3,313 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pembobotan TF-IDF Testing — Badruz Zaman</title>
+  <title>Pembobotan TF-IDF — Badruz Zaman</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
-  <nav class="navbar">
-    <a href="index.html" class="nav-link">Beranda</a> <a href="crawling.html" class="nav-link">Data Crawling</a> <a href="tfidf.html" class="nav-link active">TF-IDF Testing</a> <a href="pca.html" class="nav-link">PCA Testing</a>
-  </nav>
+  <div class="page-header">
+    <h1>Pembobotan TF-IDF</h1>
+    <p class="subtitle">Transformasi teks berita menjadi representasi numerik berbasis frekuensi kata</p>
+  </div>
 
   <main class="content">
 
-    <h2>TF-IDF Tanpa Reduksi Dimensi (Data Testing)</h2>
-    <p>
-      Berikut merupakan representasi matriks pembobotan kata menggunakan metode <strong>TF-IDF</strong> tanpa reduksi dimensi untuk <strong>data testing</strong> (40 data dokumen berita dan 7.424 kata kosakata unik / <em>vocabulary</em>):
-    </p>
-
-    <div class="download-card">
-      <div class="download-info">
-        <strong>Dataset Lengkap:</strong> 40 baris × 7.426 kolom (7.424 fitur kata unik)
-      </div>
-      <div class="download-actions">
-        <a href="03_tfidf/tfidf_testing.xlsx" class="btn-download" download>📥 Download .xlsx</a>
-        <a href="03_tfidf/tfidf_testing.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
-      </div>
+    <div class="narasi">
+      <span class="narasi-label">Tentang Proses Ini</span>
+      <p>
+        Setelah data berita mentah terkumpul, langkah selanjutnya adalah mengubah teks menjadi <strong>representasi numerik</strong> agar dapat diproses oleh algoritma <em>machine learning</em>. Mesin komputer tidak memahami kata-kata &mdash; ia hanya memahami angka. Di sinilah peran metode <strong>TF-IDF</strong> (<em>Term Frequency&ndash;Inverse Document Frequency</em>).
+      </p>
+      <p>
+        Sebelum menghitung bobot TF-IDF, seluruh teks berita melewati tahapan <em>preprocessing</em> yang mencakup: (1) <strong>case folding</strong> &mdash; mengubah semua huruf menjadi huruf kecil, (2) <strong>tokenisasi</strong> &mdash; memecah kalimat menjadi kata-kata individual, (3) <strong>stopword removal</strong> &mdash; menghapus kata-kata umum yang tidak informatif seperti &ldquo;yang&rdquo;, &ldquo;dan&rdquo;, &ldquo;di&rdquo;, serta (4) <strong>stemming</strong> &mdash; mereduksi kata ke bentuk dasarnya.
+      </p>
+      <p>
+        Dari 200 dokumen berita, diperoleh <strong>7,424 kata unik</strong> (<em>vocabulary</em>) yang membentuk ruang fitur. Setiap dokumen kemudian direpresentasikan sebagai vektor dengan 7,424 dimensi, di mana setiap elemen berisi bobot TF-IDF dari kata tersebut. Bobot ini mencerminkan seberapa penting suatu kata dalam sebuah dokumen relatif terhadap keseluruhan <em>corpus</em>.
+      </p>
+      <p>
+        Dataset dibagi menjadi dua bagian: <strong>160 dokumen untuk data training</strong> (80%) dan <strong>40 dokumen untuk data testing</strong> (20%). Pembagian ini memastikan model belajar dari sebagian besar data dan dievaluasi pada data yang belum pernah dilihat sebelumnya.
+      </p>
     </div>
 
-    <div class="table-container">
-      <table class="data-table matrix-table">
-        <thead>
-          <tr><th class="col-matrix-id">ID</th><th>aadi</th><th>aam</th><th>aan</th><th>aau</th><th>abadi</th><th>abang</th><th>abangpalmerah</th><th>abdi</th><th>abdul</th><th>abdullah</th><th class="col-ellipsis">... [7.414 kata lainnya] ...</th><th class="col-matrix-label">Label</th></tr>
-        </thead>
-        <tbody>
-<tr><td class="col-matrix-id">38</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">141</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">196</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">197</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">24</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">105</td><td>0.0373</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">181</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0501</td><td>0.0501</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">162</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0803</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">87</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">108</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">198</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">128</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">92</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">15</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">172</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">53</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">88</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">135</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">72</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">148</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">123</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">107</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">144</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">173</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">112</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">85</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">134</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">21</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">137</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">93</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">75</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">83</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">61</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">3</td><td>0</td><td>0</td><td>0</td><td>0.0396</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">64</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">52</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-<tr><td class="col-matrix-id">133</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-finance">2</span></td></tr>
-<tr><td class="col-matrix-id">22</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-sport">1</span></td></tr>
-        </tbody>
-      </table>
+    <div class="data-section">
+      <div class="data-tabs">
+        <button class="data-tab active" onclick="switchTab(this, 'tfidf-training')">Data Training (160 dokumen)</button>
+        <button class="data-tab" onclick="switchTab(this, 'tfidf-testing')">Data Testing (40 dokumen)</button>
+      </div>
+
+      <div class="tab-panel" id="tfidf-training">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>TF-IDF Training:</strong> 160 baris &times; 7,426 kolom (7,424 fitur kata unik)
+          </div>
+          <div class="download-actions">
+            <a href="03_tfidf/tfidf_training.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="03_tfidf/tfidf_training.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead><tr><th class="col-matrix-id">ID</th><th>aadi</th><th>aam</th><th>aan</th><th>aau</th><th>abadi</th><th>abang</th><th>abangpalmerah</th><th>abdi</th><th>abdul</th><th>abdullah</th><th class="col-ellipsis">... [7,414 kolom lainnya] ...</th><th class="col-matrix-label">Label</th></tr></thead>
+            <tbody>
+<tr><td class="col-matrix-id">55</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">176</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">79</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">101</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">159</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">186</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">17</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">44</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">74</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">58</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">76</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">28</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">102</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">132</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">164</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">8</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">14</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">95</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0410</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">9</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">125</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">91</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0625</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">65</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">194</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">160</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">192</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">16</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">80</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">156</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">167</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">119</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">114</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">170</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">27</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">177</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">100</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">7</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">127</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0427</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">20</td><td>0</td><td>0</td><td>0</td><td>0.0456</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">154</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">158</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">121</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">113</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">40</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">200</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">150</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">96</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">161</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">63</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">147</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">46</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">190</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">59</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">45</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">111</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">82</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">97</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">49</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">145</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">180</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">29</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">51</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">41</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">33</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.1612</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">178</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">25</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">163</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">73</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">89</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">37</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">126</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">166</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">77</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">47</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">193</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">81</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">110</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">175</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">56</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">34</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">116</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">195</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">184</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">57</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">183</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">94</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">122</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">68</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">169</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0326</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">78</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">171</td><td>0</td><td>0.0315</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">70</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">157</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">155</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">109</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">6</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">42</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">99</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">146</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">86</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">39</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">115</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">32</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">143</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">60</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">187</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">13</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">103</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">189</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">11</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">48</td><td>0</td><td>0</td><td>0.0529</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">67</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">142</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">31</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">26</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">84</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">54</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">149</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">90</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">151</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">179</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">199</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">129</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">104</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">23</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">117</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">35</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">19</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.1405</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">165</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">124</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">138</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">36</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">153</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">174</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">118</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">71</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">188</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">98</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0660</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">140</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">139</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">136</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">131</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">191</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">62</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">43</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">66</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">185</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">130</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">69</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">18</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">168</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">182</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">152</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">106</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 kata representatif pertama dari 7,424 kata unik. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="tfidf-testing" style="display:none;">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>TF-IDF Testing:</strong> 40 baris &times; 7,426 kolom (7,424 fitur kata unik)
+          </div>
+          <div class="download-actions">
+            <a href="03_tfidf/tfidf_testing.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="03_tfidf/tfidf_testing.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead><tr><th class="col-matrix-id">ID</th><th>aadi</th><th>aam</th><th>aan</th><th>aau</th><th>abadi</th><th>abang</th><th>abangpalmerah</th><th>abdi</th><th>abdul</th><th>abdullah</th><th class="col-ellipsis">... [7,414 kolom lainnya] ...</th><th class="col-matrix-label">Label</th></tr></thead>
+            <tbody>
+<tr><td class="col-matrix-id">38</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">141</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">196</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">197</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">24</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">105</td><td>0.0373</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">181</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0501</td><td>0.0501</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">162</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.0803</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">87</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">108</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">198</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">128</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">92</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">15</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">172</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">53</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">88</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">135</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">72</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">148</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">123</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">107</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">144</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">173</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">112</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">85</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">134</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">21</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">137</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">93</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">75</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">83</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">61</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">3</td><td>0</td><td>0</td><td>0</td><td>0.0396</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">64</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">52</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+<tr><td class="col-matrix-id">133</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-2">2</span></td></tr>
+<tr><td class="col-matrix-id">22</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="col-ellipsis">...</td><td class="col-matrix-label"><span class="badge badge-1">1</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 kata representatif pertama dari 7,424 kata unik. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
     </div>
-    <p class="preview-note">
-      * Menampilkan sampel 10 kata representatif pertama dan kolom label. Seluruh 7.424 fitur kata lengkap dapat diunduh melalui tombol Excel/CSV di atas.
-    </p>
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+    <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
+    <a href="crawling.html" class="fab-item" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
+    <a href="tfidf.html" class="fab-item active" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
+    <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
+    <a href="eksperimen.html" class="fab-item" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <span class="fab-icon-open">☰</span>
+      <span class="fab-icon-close">✕</span>
+    </button>
+  </div>
+
+  <script>
+    function switchTab(btn, panelId) {
+      var section = btn.closest('.data-section');
+      section.querySelectorAll('.data-tab').forEach(function(t) { t.classList.remove('active'); });
+      section.querySelectorAll('.tab-panel').forEach(function(p) { p.style.display = 'none'; });
+      btn.classList.add('active');
+      document.getElementById(panelId).style.display = 'block';
+    }
+  </script>
 </body>
 </html>

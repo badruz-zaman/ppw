@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Eksperimen Klasifikasi — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Eksperimen Klasifikasi</h1>
+    <p class="subtitle">Perbandingan akurasi kNN dan Naive Bayes pada berbagai tingkat reduksi fitur</p>
+  </div>
+
+  <main class="content">
+
+    <div class="narasi">
+      <span class="narasi-label">Tentang Eksperimen Ini</span>
+      <p>
+        Eksperimen ini bertujuan untuk menguji apakah <strong>reduksi dimensi memengaruhi akurasi klasifikasi</strong>, dan bagaimana dua algoritma klasifikasi yang berbeda merespons perubahan jumlah fitur. Dua algoritma yang digunakan adalah <strong>k-Nearest Neighbors (kNN)</strong> dan <strong>Naive Bayes</strong> &mdash; masing-masing memiliki cara kerja yang fundamental berbeda.
+      </p>
+      <p>
+        <strong>kNN</strong> mengklasifikasikan data berdasarkan kedekatan jarak (<em>distance-based</em>), di mana sebuah dokumen dikelompokkan sesuai dengan label mayoritas dari <em>k</em> tetangga terdekatnya di ruang fitur. <strong>Naive Bayes</strong>, sebaliknya, menggunakan pendekatan probabilistik berdasarkan Teorema Bayes, dengan asumsi bahwa setiap fitur bersifat independen satu sama lain (<em>feature independence</em>).
+      </p>
+      <p>
+        Eksperimen dilakukan dalam dua skenario. <strong>Pertama</strong>, reduksi dimensi menggunakan PCA secara bertahap (150, 100, 50, 20, dan 10 komponen). <strong>Kedua</strong>, seleksi fitur menggunakan metode <strong>Chi-Square (&chi;&sup2;)</strong> yang memilih kata-kata paling diskriminatif dari 6.000 hingga 500 kata teratas. Metrik evaluasi yang digunakan adalah <em>Classification Accuracy</em> (CA).
+      </p>
+    </div>
+
+    <h2>Skenario 1: Reduksi Dimensi dengan PCA</h2>
+    <p>
+      Tabel berikut menampilkan akurasi klasifikasi kNN dan Naive Bayes pada berbagai jumlah komponen PCA, beserta persentase informasi variansi yang dipertahankan:
+    </p>
+
+    <table class="experiment-table">
+      <thead>
+        <tr>
+          <th>Metode</th>
+          <th>Jumlah Komponen</th>
+          <th>Informasi Variansi (%)</th>
+          <th>Akurasi kNN (%)</th>
+          <th>Akurasi Naive Bayes (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Raw TF-IDF (Tanpa Reduksi)</td>
+          <td>7.424</td>
+          <td>100,00</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>PCA 150 Komponen</td>
+          <td>150</td>
+          <td>98,73</td>
+          <td>95,0</td>
+          <td>52,5</td>
+        </tr>
+        <tr>
+          <td>PCA 100 Komponen</td>
+          <td>100</td>
+          <td>80,48</td>
+          <td>87,5</td>
+          <td>77,5</td>
+        </tr>
+        <tr>
+          <td>PCA 50 Komponen</td>
+          <td>50</td>
+          <td>52,34</td>
+          <td class="highlight-best">100,0</td>
+          <td>72,5</td>
+        </tr>
+        <tr>
+          <td>PCA 20 Komponen</td>
+          <td>20</td>
+          <td>29,42</td>
+          <td>95,0</td>
+          <td>72,5</td>
+        </tr>
+        <tr>
+          <td>PCA 10 Komponen</td>
+          <td>10</td>
+          <td>18,66</td>
+          <td>67,5</td>
+          <td>80,0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="experiment-caption">Tabel 1. Akurasi klasifikasi pada berbagai jumlah komponen PCA</p>
+
+    <h2>Skenario 2: Seleksi Fitur dengan Chi-Square</h2>
+    <p>
+      Berbeda dengan PCA yang mentransformasi fitur, metode Chi-Square (&chi;&sup2;) bekerja dengan <strong>memilih kata-kata yang paling berkorelasi dengan label kelas</strong>. Kata-kata yang memiliki skor Chi-Square tertinggi dianggap paling diskriminatif untuk membedakan kategori Sport dan Finance.
+    </p>
+
+    <table class="experiment-table">
+      <thead>
+        <tr>
+          <th>Tahap</th>
+          <th>Jumlah Kata</th>
+          <th>Akurasi kNN (%)</th>
+          <th>Akurasi Naive Bayes (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Data Asli (7.424 kata)</td>
+          <td>7.424</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-6000</td>
+          <td>6.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-4000</td>
+          <td>4.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-2000</td>
+          <td>2.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-1000</td>
+          <td>1.000</td>
+          <td>77,5</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-500</td>
+          <td>500</td>
+          <td>90,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="experiment-caption">Tabel 2. Akurasi klasifikasi pada berbagai tingkat seleksi fitur Chi-Square</p>
+
+    <h2>Analisis Hasil</h2>
+
+    <div class="narasi">
+      <span class="narasi-label">Temuan Utama</span>
+      <p>
+        Pada <strong>data asli tanpa reduksi</strong> (7.424 fitur), baik kNN maupun Naive Bayes sama-sama mencapai akurasi sempurna 100%. Ini menunjukkan bahwa kedua kategori berita (Sport dan Finance) memiliki perbedaan kosakata yang sangat jelas dan mudah dipisahkan.
+      </p>
+      <p>
+        Pada <strong>eksperimen PCA</strong>, kNN menunjukkan performa yang berfluktuasi &mdash; mencapai 100% pada 50 komponen namun turun ke 67,5% pada 10 komponen. Hal ini terjadi karena kNN sangat bergantung pada informasi jarak antar titik data, yang semakin banyak hilang ketika komponen direduksi terlalu drastis.
+      </p>
+      <p>
+        <strong>Naive Bayes</strong> pada PCA menunjukkan pola menarik: akurasinya cenderung meningkat saat komponen semakin sedikit (dari 52,5% pada 150 PC menjadi 80,0% pada 10 PC). Ini disebabkan asumsi <em>feature independence</em> pada Naive Bayes semakin terpenuhi ketika fitur-fitur hasil PCA bersifat orthogonal (saling tegak lurus). Namun pada 150 komponen, terlalu banyak komponen dengan variansi kecil justru menambah <em>noise</em> yang mengganggu estimasi probabilitas.
+      </p>
+      <p>
+        Pada <strong>eksperimen Chi-Square</strong>, Naive Bayes mempertahankan akurasi sempurna 100% di semua level seleksi fitur &mdash; menunjukkan robustness yang luar biasa. Sementara itu, kNN mengalami penurunan pada 1.000 kata (77,5%) namun kembali membaik pada 500 kata (90,0%). Pola ini mengindikasikan bahwa pada <em>threshold</em> 1.000 kata, terdapat fitur-fitur yang justru mengaburkan jarak antar kelas bagi kNN.
+      </p>
+    </div>
+
+    <div class="download-card">
+      <div class="download-info">
+        <strong>Notebook Eksperimen:</strong> Seluruh kode eksperimen lengkap (Jupyter Notebook)
+      </div>
+      <div class="download-actions">
+        <a href="05_eksperimen/EksperimenPCA-Klasifikasi.ipynb" class="btn-download" download>&#128229; Download Notebook (.ipynb)</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
+
+
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+    <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
+    <a href="crawling.html" class="fab-item" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
+    <a href="tfidf.html" class="fab-item" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
+    <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
+    <a href="eksperimen.html" class="fab-item active" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <span class="fab-icon-open">☰</span>
+      <span class="fab-icon-close">✕</span>
+    </button>
+  </div>
+</body>
+</html>

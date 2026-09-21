@@ -1,43 +1,116 @@
 """
 Script Pembuat Website Multi-Page Statis (PPW)
-Membagi website menjadi beberapa file HTML agar rapi, ringan, dan tidak ribuan baris:
-1. index.html    -> Halaman Pengantar, Konsep Dasar, Taksonomi, dan Navigasi Tugas
-2. crawling.html -> Halaman Khusus Tabel Data Crawling Berita Detik.com (200 Data)
-3. tfidf.html    -> Halaman Khusus Pembobotan Kata TF-IDF Testing (40 Data x 7.426 Kolom)
-4. pca.html      -> Halaman Khusus Reduksi Dimensi PCA Testing (40 Data x 160 PC)
-Style dipisah ke style.css
+Redesain dengan Floating Action Button (FAB), narasi tiap halaman,
+data training + testing, dan halaman eksperimen.
+
+Output:
+1. index.html      -> Pengantar Web Mining (konsep, taksonomi, siklus)
+2. crawling.html   -> Data Crawling + narasi proses
+3. tfidf.html      -> TF-IDF Training & Testing + narasi proses
+4. pca.html        -> PCA Training & Testing + narasi proses
+5. eksperimen.html -> Hasil perbandingan akurasi kNN vs Naive Bayes
+Style: style.css (dibuat terpisah)
 """
 
 import pandas as pd
 import html
-import os
 import time
 
 t0 = time.time()
-print("Memulai build website multi-page...")
+print("Memulai build website multi-page (redesain)...")
 
-# Helper untuk membuat header navbar
-def buat_navbar(active_page):
-    links = [
-        ("index.html", "Beranda", active_page == "index"),
-        ("crawling.html", "Data Crawling", active_page == "crawling"),
-        ("tfidf.html", "TF-IDF Testing", active_page == "tfidf"),
-        ("pca.html", "PCA Testing", active_page == "pca"),
+# ==============================================================================
+# HELPER: Floating Action Button (FAB) Menu Component
+# ==============================================================================
+def buat_fab_menu(active_page):
+    items = [
+        ("index.html",      "Pengantar",  "\U0001F4D6", "index"),
+        ("crawling.html",   "Crawling",   "\U0001F577\uFE0F", "crawling"),
+        ("tfidf.html",      "TF-IDF",     "\U0001F4CA", "tfidf"),
+        ("pca.html",        "PCA",        "\U0001F52C", "pca"),
+        ("eksperimen.html", "Eksperimen", "\U0001F9EA", "eksperimen"),
     ]
-    html_links = []
-    for url, text, is_active in links:
-        cls = "nav-link active" if is_active else "nav-link"
-        html_links.append(f'<a href="{url}" class="{cls}">{text}</a>')
-    
-    return f"""  <div class="topbar">Pencarian dan Penambangan Web · 2026</div>
-  <nav class="navbar">
-    {" ".join(html_links)}
-  </nav>"""
+    fab_items = []
+    for i, (url, label, emoji, page_id) in enumerate(items):
+        active_cls = " active" if page_id == active_page else ""
+        fab_items.append(
+            f'    <a href="{url}" class="fab-item{active_cls}" '
+            f'data-tooltip="{label}" style="--i:{i}">'
+            f'<span class="fab-emoji">{emoji}</span></a>'
+        )
+    items_html = "\n".join(fab_items)
+    return f'''
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+{items_html}
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <span class="fab-icon-open">\u2630</span>
+      <span class="fab-icon-close">\u2715</span>
+    </button>
+  </div>'''
+
+
+# HELPER: Tab switching script (inline JS)
+TAB_SCRIPT = '''
+  <script>
+    function switchTab(btn, panelId) {
+      var section = btn.closest('.data-section');
+      section.querySelectorAll('.data-tab').forEach(function(t) { t.classList.remove('active'); });
+      section.querySelectorAll('.tab-panel').forEach(function(p) { p.style.display = 'none'; });
+      btn.classList.add('active');
+      document.getElementById(panelId).style.display = 'block';
+    }
+  </script>'''
+
+
+# HELPER: Generate preview table rows for matrix data (TF-IDF / PCA)
+def buat_matrix_preview(df, n_preview_cols=10):
+    """Generate thead + tbody HTML showing first n_preview_cols feature columns + ellipsis + label."""
+    cols = df.columns.tolist()
+    id_col = cols[0]
+    label_col = cols[-1]
+    feature_cols = cols[1:-1]
+    preview_cols = feature_cols[:n_preview_cols]
+    remaining = len(feature_cols) - n_preview_cols
+
+    # Thead
+    th_parts = [f'<th class="col-matrix-id">{html.escape(str(id_col))}</th>']
+    for c in preview_cols:
+        th_parts.append(f'<th>{html.escape(str(c))}</th>')
+    if remaining > 0:
+        th_parts.append(f'<th class="col-ellipsis">... [{remaining:,} kolom lainnya] ...</th>')
+    th_parts.append(f'<th class="col-matrix-label">{html.escape(str(label_col))}</th>')
+    thead = "<tr>" + "".join(th_parts) + "</tr>"
+
+    # Tbody
+    rows = []
+    for row_data in df.itertuples(index=False):
+        cells = [f'<td class="col-matrix-id">{row_data[0]}</td>']
+        for idx in range(1, 1 + len(preview_cols)):
+            val = row_data[idx]
+            if val == 0.0 or val == 0:
+                cells.append('<td>0</td>')
+            else:
+                cells.append(f'<td>{val:.4f}</td>')
+        if remaining > 0:
+            cells.append('<td class="col-ellipsis">...</td>')
+        label_val = row_data[-1]
+        badge_cls = "badge badge-1" if label_val == 1 else "badge badge-2"
+        cells.append(f'<td class="col-matrix-label"><span class="{badge_cls}">{label_val}</span></td>')
+        rows.append("<tr>" + "".join(cells) + "</tr>")
+    tbody = "\n".join(rows)
+
+    return thead, tbody
+
 
 # ==============================================================================
-# 1. GENERATE index.html (Halaman Pengantar & Konsep - Sangat Rapi & Ringkas)
+# 1. GENERATE index.html — Halaman Pengantar
 # ==============================================================================
-index_content = f"""<!DOCTYPE html>
+print("  Generating index.html...")
+
+index_html = f'''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -46,8 +119,6 @@ index_content = f"""<!DOCTYPE html>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-{buat_navbar("index")}
 
   <div class="hero">
     <h1>Pengantar Web Mining</h1>
@@ -58,7 +129,7 @@ index_content = f"""<!DOCTYPE html>
 
   <div class="author">
     <div class="name">Badruz Zaman Ash Sholih</div>
-    <div class="meta">240411100140 · <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
+    <div class="meta">240411100140 &middot; <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
   </div>
 
   <main class="content content-narrow">
@@ -79,7 +150,7 @@ index_content = f"""<!DOCTYPE html>
     <div class="taxonomy-item">
       <h4>Web Content Mining</h4>
       <p>
-        Penambangan dan ekstraksi informasi dari konten halaman web — teks, gambar, audio, maupun video. Mengintegrasikan teknik <em>Natural Language Processing</em>, <em>Information Retrieval</em>, serta klasifikasi dan klasterisasi teks.
+        Penambangan dan ekstraksi informasi dari konten halaman web &mdash; teks, gambar, audio, maupun video. Mengintegrasikan teknik <em>Natural Language Processing</em>, <em>Information Retrieval</em>, serta klasifikasi dan klasterisasi teks.
       </p>
     </div>
 
@@ -100,75 +171,56 @@ index_content = f"""<!DOCTYPE html>
     <h2>Siklus Proses</h2>
     <p>Secara umum, penambangan web mengikuti alur sistematis berikut:</p>
     <ol>
-      <li><strong>Pengumpulan Data</strong> — crawling dan scraping dokumen dari internet.</li>
-      <li><strong>Pra-pemrosesan</strong> — pembersihan HTML, tokenisasi, <em>stopword removal</em>, <em>stemming</em>, dan parsing log.</li>
-      <li><strong>Penerapan Algoritma</strong> — asosiasi, klasifikasi, regresi, atau klasterisasi untuk menemukan pola.</li>
-      <li><strong>Evaluasi &amp; Interpretasi</strong> — validasi pola yang ditemukan untuk pengambilan keputusan.</li>
+      <li><strong>Pengumpulan Data</strong> &mdash; crawling dan scraping dokumen dari internet.</li>
+      <li><strong>Pra-pemrosesan</strong> &mdash; pembersihan HTML, tokenisasi, <em>stopword removal</em>, <em>stemming</em>, dan parsing log.</li>
+      <li><strong>Penerapan Algoritma</strong> &mdash; asosiasi, klasifikasi, regresi, atau klasterisasi untuk menemukan pola.</li>
+      <li><strong>Evaluasi &amp; Interpretasi</strong> &mdash; validasi pola yang ditemukan untuk pengambilan keputusan.</li>
     </ol>
-
-    <h2>Tahapan Praktikum &amp; Dataset</h2>
-    <p>Pilih halaman di bawah ini untuk melihat data dan hasil komputasi pada masing-masing tahapan:</p>
-
-    <div class="grid-cards">
-      <a href="crawling.html" class="card-nav">
-        <span class="badge-stage">Tahap 1 · Crawling</span>
-        <h3>Data Berita Detik.com</h3>
-        <p>200 data artikel berita (100 kategori sport &amp; 100 kategori finance).</p>
-      </a>
-
-      <a href="tfidf.html" class="card-nav">
-        <span class="badge-stage">Tahap 2 · Vektorisasi</span>
-        <h3>TF-IDF Testing</h3>
-        <p>Matriks pembobotan kata 40 data testing × 7.424 kata unik (vocabulary).</p>
-      </a>
-
-      <a href="pca.html" class="card-nav">
-        <span class="badge-stage">Tahap 3 · Reduksi</span>
-        <h3>PCA Testing</h3>
-        <p>Hasil reduksi dimensi 40 data testing menjadi 160 Principal Components.</p>
-      </a>
-    </div>
 
     <div class="references">
       <h3>Daftar Pustaka</h3>
       <ol>
         <li>Liu, B. (2011). <em>Web Data Mining: Exploring Hyperlinks, Contents, and Usage Data</em> (2nd ed.). Springer-Verlag.</li>
-        <li>Kosala, R., &amp; Blockeel, H. (2000). Web mining research: A survey. <em>ACM SIGKDD Explorations Newsletter</em>, 2(1), 1–15.</li>
-        <li>Cooley, R., Mobasher, B., &amp; Srivastava, J. (1999). Data preparation for mining World Wide Web browsing patterns. <em>Knowledge and Information Systems</em>, 1(1), 5–32.</li>
+        <li>Kosala, R., &amp; Blockeel, H. (2000). Web mining research: A survey. <em>ACM SIGKDD Explorations Newsletter</em>, 2(1), 1&ndash;15.</li>
+        <li>Cooley, R., Mobasher, B., &amp; Srivastava, J. (1999). Data preparation for mining World Wide Web browsing patterns. <em>Knowledge and Information Systems</em>, 1(1), 5&ndash;32.</li>
         <li>Han, J., Kamber, M., &amp; Pei, J. (2011). <em>Data Mining: Concepts and Techniques</em> (3rd ed.). Morgan Kaufmann.</li>
       </ol>
     </div>
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+{buat_fab_menu("index")}
 </body>
 </html>
-"""
+'''
 
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(index_content)
-print(f"-> index.html berhasil dibuat ({len(index_content.splitlines())} baris)")
+    f.write(index_html)
+print(f"  -> index.html ({len(index_html.splitlines())} baris)")
+
 
 # ==============================================================================
-# 2. GENERATE crawling.html (Halaman Data Crawling)
+# 2. GENERATE crawling.html — Halaman Data Crawling + Narasi
 # ==============================================================================
+print("  Generating crawling.html...")
+
 df_crawl = pd.read_csv("01_crawling/data_berita_detik.csv")
 rows_crawl = []
-for idx, row in df_crawl.iterrows():
+for _, row in df_crawl.iterrows():
     row_id = row['id']
     isi = html.escape(str(row['isi_berita']))
     label = html.escape(str(row['label']))
     badge_cls = f"badge badge-{label.lower()}"
-    rows_crawl.append(f"""            <tr>
+    rows_crawl.append(f'''            <tr>
               <td class="col-id">{row_id}</td>
               <td class="col-berita">{isi}</td>
               <td class="col-label"><span class="{badge_cls}">{label}</span></td>
-            </tr>""")
-table_crawl_str = "\n".join(rows_crawl)
+            </tr>''')
+table_crawl = "\n".join(rows_crawl)
 
-crawling_content = f"""<!DOCTYPE html>
+crawling_html = f'''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -178,22 +230,33 @@ crawling_content = f"""<!DOCTYPE html>
 </head>
 <body>
 
-{buat_navbar("crawling")}
+  <div class="page-header">
+    <h1>Data Crawling Berita</h1>
+    <p class="subtitle">Pengumpulan data mentah dari portal berita Detik.com secara otomatis</p>
+  </div>
 
   <main class="content">
 
-    <h2>Data Hasil Crawling Berita Detik.com</h2>
-    <p>
-      Berikut merupakan dataset berita hasil penambangan data (<em>web scraping/crawling</em>) dari portal Detik.com yang terdiri atas <strong>200 data artikel berita</strong> (100 berita kategori <strong>sport</strong> dan 100 berita kategori <strong>finance</strong>):
-    </p>
+    <div class="narasi">
+      <span class="narasi-label">Tentang Proses Ini</span>
+      <p>
+        Tahap pertama dalam proses web mining adalah <strong>pengumpulan data mentah</strong> dari sumber yang relevan. Dalam praktikum ini, data dikumpulkan dari portal berita <strong>Detik.com</strong> &mdash; salah satu situs berita daring terbesar di Indonesia &mdash; menggunakan teknik <em>web crawling</em> secara otomatis.
+      </p>
+      <p>
+        Proses crawling memanfaatkan <strong>Selenium WebDriver</strong> untuk mengendalikan browser secara programatis dan <strong>BeautifulSoup</strong> untuk mem-parsing struktur HTML halaman berita. Secara otomatis, program mengunjungi halaman-halaman berita pada dua kategori yang dipilih &mdash; <em>Sport</em> dan <em>Finance</em> &mdash; lalu mengekstraksi isi teks lengkap setiap artikel.
+      </p>
+      <p>
+        Hasilnya berupa <strong>200 artikel berita mentah</strong> (100 dari kategori Sport dan 100 dari kategori Finance) yang tersimpan dalam format tabular dengan tiga kolom: nomor identifikasi (ID), isi lengkap berita, dan label kategori. Dataset inilah yang menjadi bahan baku untuk seluruh tahapan analisis selanjutnya.
+      </p>
+    </div>
 
     <div class="download-card">
       <div class="download-info">
-        <strong>File Mentah Crawling:</strong> 200 baris × 3 kolom (id, isi_berita, label)
+        <strong>Dataset Crawling:</strong> 200 baris &times; 3 kolom (id, isi_berita, label)
       </div>
       <div class="download-actions">
-        <a href="01_crawling/data_berita_detik.xlsx" class="btn-download" download>📥 Download .xlsx</a>
-        <a href="01_crawling/data_berita_detik.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
+        <a href="01_crawling/data_berita_detik.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+        <a href="01_crawling/data_berita_detik.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
       </div>
     </div>
 
@@ -207,185 +270,448 @@ crawling_content = f"""<!DOCTYPE html>
           </tr>
         </thead>
         <tbody>
-{table_crawl_str}
+{table_crawl}
         </tbody>
       </table>
     </div>
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+{buat_fab_menu("crawling")}
 </body>
 </html>
-"""
+'''
 
 with open("crawling.html", "w", encoding="utf-8") as f:
-    f.write(crawling_content)
-print("-> crawling.html berhasil dibuat")
+    f.write(crawling_html)
+print(f"  -> crawling.html ({len(crawling_html.splitlines())} baris)")
+
 
 # ==============================================================================
-# 3. GENERATE tfidf.html (Halaman TF-IDF Testing)
+# 3. GENERATE tfidf.html — Halaman TF-IDF Training & Testing + Narasi
 # ==============================================================================
-df_tfidf = pd.read_csv("03_tfidf/tfidf_testing.csv")
-sample_words = df_tfidf.columns[1:11].tolist()
+print("  Generating tfidf.html...")
 
-tfidf_th_list = ['<th class="col-matrix-id">ID</th>']
-for col in sample_words:
-    tfidf_th_list.append(f'<th>{html.escape(col)}</th>')
-tfidf_th_list.append('<th class="col-ellipsis">... [7.414 kata lainnya] ...</th>')
-tfidf_th_list.append('<th class="col-matrix-label">Label</th>')
-tfidf_thead = "<tr>" + "".join(tfidf_th_list) + "</tr>"
+df_tfidf_train = pd.read_csv("03_tfidf/tfidf_training.csv")
+df_tfidf_test = pd.read_csv("03_tfidf/tfidf_testing.csv")
 
-tfidf_rows = []
-for row in df_tfidf.itertuples(index=False):
-    cells = []
-    cells.append(f'<td class="col-matrix-id">{row[0]}</td>')
-    for val in row[1:11]:
-        if val == 0.0 or val == 0:
-            cells.append('<td>0</td>')
-        else:
-            cells.append(f'<td>{val:.4f}</td>')
-    cells.append('<td class="col-ellipsis">...</td>')
-    label_val = row[-1]
-    badge_cls = "badge badge-sport" if label_val == 1 else "badge badge-finance"
-    cells.append(f'<td class="col-matrix-label"><span class="{badge_cls}">{label_val}</span></td>')
-    tfidf_rows.append("<tr>" + "".join(cells) + "</tr>")
-tfidf_tbody = "\n".join(tfidf_rows)
+train_thead, train_tbody = buat_matrix_preview(df_tfidf_train, n_preview_cols=10)
+test_thead, test_tbody = buat_matrix_preview(df_tfidf_test, n_preview_cols=10)
 
-tfidf_content = f"""<!DOCTYPE html>
+n_vocab = len(df_tfidf_train.columns) - 2  # minus ID and Label
+
+tfidf_html = f'''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pembobotan TF-IDF Testing — Badruz Zaman</title>
+  <title>Pembobotan TF-IDF — Badruz Zaman</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-{buat_navbar("tfidf")}
+  <div class="page-header">
+    <h1>Pembobotan TF-IDF</h1>
+    <p class="subtitle">Transformasi teks berita menjadi representasi numerik berbasis frekuensi kata</p>
+  </div>
 
   <main class="content">
 
-    <h2>TF-IDF Tanpa Reduksi Dimensi (Data Testing)</h2>
-    <p>
-      Berikut merupakan representasi matriks pembobotan kata menggunakan metode <strong>TF-IDF</strong> tanpa reduksi dimensi untuk <strong>data testing</strong> (40 data dokumen berita dan 7.424 kata kosakata unik / <em>vocabulary</em>):
-    </p>
-
-    <div class="download-card">
-      <div class="download-info">
-        <strong>Dataset Lengkap:</strong> 40 baris × 7.426 kolom (7.424 fitur kata unik)
-      </div>
-      <div class="download-actions">
-        <a href="03_tfidf/tfidf_testing.xlsx" class="btn-download" download>📥 Download .xlsx</a>
-        <a href="03_tfidf/tfidf_testing.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
-      </div>
+    <div class="narasi">
+      <span class="narasi-label">Tentang Proses Ini</span>
+      <p>
+        Setelah data berita mentah terkumpul, langkah selanjutnya adalah mengubah teks menjadi <strong>representasi numerik</strong> agar dapat diproses oleh algoritma <em>machine learning</em>. Mesin komputer tidak memahami kata-kata &mdash; ia hanya memahami angka. Di sinilah peran metode <strong>TF-IDF</strong> (<em>Term Frequency&ndash;Inverse Document Frequency</em>).
+      </p>
+      <p>
+        Sebelum menghitung bobot TF-IDF, seluruh teks berita melewati tahapan <em>preprocessing</em> yang mencakup: (1) <strong>case folding</strong> &mdash; mengubah semua huruf menjadi huruf kecil, (2) <strong>tokenisasi</strong> &mdash; memecah kalimat menjadi kata-kata individual, (3) <strong>stopword removal</strong> &mdash; menghapus kata-kata umum yang tidak informatif seperti &ldquo;yang&rdquo;, &ldquo;dan&rdquo;, &ldquo;di&rdquo;, serta (4) <strong>stemming</strong> &mdash; mereduksi kata ke bentuk dasarnya.
+      </p>
+      <p>
+        Dari 200 dokumen berita, diperoleh <strong>{n_vocab:,} kata unik</strong> (<em>vocabulary</em>) yang membentuk ruang fitur. Setiap dokumen kemudian direpresentasikan sebagai vektor dengan {n_vocab:,} dimensi, di mana setiap elemen berisi bobot TF-IDF dari kata tersebut. Bobot ini mencerminkan seberapa penting suatu kata dalam sebuah dokumen relatif terhadap keseluruhan <em>corpus</em>.
+      </p>
+      <p>
+        Dataset dibagi menjadi dua bagian: <strong>160 dokumen untuk data training</strong> (80%) dan <strong>40 dokumen untuk data testing</strong> (20%). Pembagian ini memastikan model belajar dari sebagian besar data dan dievaluasi pada data yang belum pernah dilihat sebelumnya.
+      </p>
     </div>
 
-    <div class="table-container">
-      <table class="data-table matrix-table">
-        <thead>
-          {tfidf_thead}
-        </thead>
-        <tbody>
-{tfidf_tbody}
-        </tbody>
-      </table>
+    <div class="data-section">
+      <div class="data-tabs">
+        <button class="data-tab active" onclick="switchTab(this, 'tfidf-training')">Data Training (160 dokumen)</button>
+        <button class="data-tab" onclick="switchTab(this, 'tfidf-testing')">Data Testing (40 dokumen)</button>
+      </div>
+
+      <div class="tab-panel" id="tfidf-training">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>TF-IDF Training:</strong> 160 baris &times; {len(df_tfidf_train.columns):,} kolom ({n_vocab:,} fitur kata unik)
+          </div>
+          <div class="download-actions">
+            <a href="03_tfidf/tfidf_training.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="03_tfidf/tfidf_training.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{train_thead}</thead>
+            <tbody>
+{train_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 kata representatif pertama dari {n_vocab:,} kata unik. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="tfidf-testing" style="display:none;">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>TF-IDF Testing:</strong> 40 baris &times; {len(df_tfidf_test.columns):,} kolom ({n_vocab:,} fitur kata unik)
+          </div>
+          <div class="download-actions">
+            <a href="03_tfidf/tfidf_testing.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="03_tfidf/tfidf_testing.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{test_thead}</thead>
+            <tbody>
+{test_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 kata representatif pertama dari {n_vocab:,} kata unik. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
     </div>
-    <p class="preview-note">
-      * Menampilkan sampel 10 kata representatif pertama dan kolom label. Seluruh 7.424 fitur kata lengkap dapat diunduh melalui tombol Excel/CSV di atas.
-    </p>
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+{buat_fab_menu("tfidf")}
+{TAB_SCRIPT}
 </body>
 </html>
-"""
+'''
 
 with open("tfidf.html", "w", encoding="utf-8") as f:
-    f.write(tfidf_content)
-print("-> tfidf.html berhasil dibuat")
+    f.write(tfidf_html)
+print(f"  -> tfidf.html ({len(tfidf_html.splitlines())} baris)")
+
 
 # ==============================================================================
-# 4. GENERATE pca.html (Halaman PCA Testing)
+# 4. GENERATE pca.html — Halaman PCA Training & Testing + Narasi
 # ==============================================================================
-df_pca = pd.read_csv("04_reduksi_dimensi/tfidf_pca_testing.csv")
-pca_cols = df_pca.columns.tolist()
+print("  Generating pca.html...")
 
-pca_th_list = []
-for i, col in enumerate(pca_cols):
-    if col == 'ID':
-        pca_th_list.append('<th class="col-matrix-id">ID</th>')
-    elif col == 'Label':
-        pca_th_list.append('<th class="col-matrix-label">Label</th>')
-    else:
-        pca_th_list.append(f'<th>{html.escape(col)}</th>')
-pca_thead = "<tr>" + "".join(pca_th_list) + "</tr>"
+df_pca_train = pd.read_csv("04_reduksi_dimensi/tfidf_pca_training.csv")
+df_pca_test = pd.read_csv("04_reduksi_dimensi/tfidf_pca_testing.csv")
 
-pca_rows = []
-for row in df_pca.itertuples(index=False):
-    cells = []
-    cells.append(f'<td class="col-matrix-id">{row[0]}</td>')
-    for val in row[1:-1]:
-        cells.append(f'<td>{val:.4f}</td>')
-    label_val = row[-1]
-    badge_cls = "badge badge-sport" if label_val == 1 else "badge badge-finance"
-    cells.append(f'<td class="col-matrix-label"><span class="{badge_cls}">{label_val}</span></td>')
-    pca_rows.append("<tr>" + "".join(cells) + "</tr>")
-pca_tbody = "\n".join(pca_rows)
+n_pc = len(df_pca_train.columns) - 2  # minus ID and Label
 
-pca_content = f"""<!DOCTYPE html>
+pca_train_thead, pca_train_tbody = buat_matrix_preview(df_pca_train, n_preview_cols=10)
+pca_test_thead, pca_test_tbody = buat_matrix_preview(df_pca_test, n_preview_cols=10)
+
+pca_html = f'''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reduksi Dimensi PCA Testing — Badruz Zaman</title>
+  <title>Reduksi Dimensi PCA — Badruz Zaman</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-{buat_navbar("pca")}
+  <div class="page-header">
+    <h1>Reduksi Dimensi PCA</h1>
+    <p class="subtitle">Menyederhanakan ribuan fitur kata menjadi komponen utama tanpa kehilangan informasi kunci</p>
+  </div>
 
   <main class="content">
 
-    <h2>TF-IDF dengan Reduksi Dimensi PCA (Data Testing)</h2>
-    <p>
-      Berikut merupakan hasil reduksi dimensi menggunakan metode <strong>Principal Component Analysis (PCA)</strong> untuk <strong>data testing</strong> dari 7.424 fitur kata menjadi 160 komponen utama (<em>Principal Components</em>, PC1 s/d PC160):
-    </p>
-
-    <div class="download-card">
-      <div class="download-info">
-        <strong>Dataset PCA:</strong> 40 baris × 162 kolom (160 Principal Components)
-      </div>
-      <div class="download-actions">
-        <a href="04_reduksi_dimensi/tfidf_pca_testing.xlsx" class="btn-download" download>📥 Download .xlsx</a>
-        <a href="04_reduksi_dimensi/tfidf_pca_testing.csv" class="btn-download btn-download-alt" download>📄 Download .csv</a>
-      </div>
+    <div class="narasi">
+      <span class="narasi-label">Tentang Proses Ini</span>
+      <p>
+        Dengan {n_vocab:,} dimensi fitur, data TF-IDF memiliki ukuran yang sangat besar &mdash; sebuah kondisi yang dikenal sebagai <em>curse of dimensionality</em>. Jumlah fitur yang jauh melebihi jumlah data training dapat menyebabkan <em>overfitting</em> dan memperlambat proses komputasi secara signifikan. Untuk mengatasi hal ini, digunakan metode <strong>Principal Component Analysis (PCA)</strong> untuk mereduksi dimensi data.
+      </p>
+      <p>
+        PCA bekerja dengan mentransformasi fitur-fitur asli menjadi sekumpulan fitur baru yang disebut <strong>Principal Components</strong> (PC). Setiap PC merupakan kombinasi linear dari seluruh fitur asli, disusun sedemikian rupa sehingga PC pertama menangkap variansi data terbesar, PC kedua menangkap variansi terbesar berikutnya yang tegak lurus terhadap PC pertama, dan seterusnya.
+      </p>
+      <p>
+        Terdapat <strong>batasan matematis</strong> yang penting: jumlah maksimum komponen PCA yang dapat dihasilkan adalah min(N, D), di mana N adalah jumlah data training dan D adalah jumlah fitur. Karena data training berjumlah 160 dokumen, maka PCA menghasilkan maksimal <strong>{n_pc} Principal Components</strong> &mdash; mereduksi dimensi secara drastis dari {n_vocab:,} menjadi {n_pc}.
+      </p>
+      <p>
+        PCA di-<em>fitting</em> pada data training terlebih dahulu, kemudian transformasi yang sama diterapkan pada data testing untuk menjaga konsistensi representasi antar kedua set data.
+      </p>
     </div>
 
-    <div class="table-container">
-      <table class="data-table matrix-table">
-        <thead>
-          {pca_thead}
-        </thead>
-        <tbody>
-{pca_tbody}
-        </tbody>
-      </table>
+    <div class="data-section">
+      <div class="data-tabs">
+        <button class="data-tab active" onclick="switchTab(this, 'pca-training')">Data Training ({len(df_pca_train)} dokumen)</button>
+        <button class="data-tab" onclick="switchTab(this, 'pca-testing')">Data Testing ({len(df_pca_test)} dokumen)</button>
+      </div>
+
+      <div class="tab-panel" id="pca-training">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>PCA Training:</strong> {len(df_pca_train)} baris &times; {len(df_pca_train.columns)} kolom ({n_pc} Principal Components)
+          </div>
+          <div class="download-actions">
+            <a href="04_reduksi_dimensi/tfidf_pca_training.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="04_reduksi_dimensi/tfidf_pca_training.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{pca_train_thead}</thead>
+            <tbody>
+{pca_train_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 dari {n_pc} Principal Components. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="pca-testing" style="display:none;">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>PCA Testing:</strong> {len(df_pca_test)} baris &times; {len(df_pca_test.columns)} kolom ({n_pc} Principal Components)
+          </div>
+          <div class="download-actions">
+            <a href="04_reduksi_dimensi/tfidf_pca_testing.xlsx" class="btn-download" download>&#128229; Download .xlsx</a>
+            <a href="04_reduksi_dimensi/tfidf_pca_testing.csv" class="btn-download btn-download-alt" download>&#128196; Download .csv</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{pca_test_thead}</thead>
+            <tbody>
+{pca_test_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">
+          * Menampilkan 10 dari {n_pc} Principal Components. Dataset lengkap tersedia melalui tombol download di atas.
+        </p>
+      </div>
     </div>
 
   </main>
 
-  <footer>&copy; 2026 Badruz Zaman · 240411100140</footer>
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
 
+{buat_fab_menu("pca")}
+{TAB_SCRIPT}
 </body>
 </html>
-"""
+'''
 
 with open("pca.html", "w", encoding="utf-8") as f:
-    f.write(pca_content)
-print("-> pca.html berhasil dibuat")
+    f.write(pca_html)
+print(f"  -> pca.html ({len(pca_html.splitlines())} baris)")
 
-print(f"\nSelesai! Seluruh file website berhasil dibuat dalam {time.time()-t0:.2f} detik.")
+
+# ==============================================================================
+# 5. GENERATE eksperimen.html — Halaman Hasil Eksperimen Klasifikasi
+# ==============================================================================
+print("  Generating eksperimen.html...")
+
+eksperimen_html = f'''<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Eksperimen Klasifikasi — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Eksperimen Klasifikasi</h1>
+    <p class="subtitle">Perbandingan akurasi kNN dan Naive Bayes pada berbagai tingkat reduksi fitur</p>
+  </div>
+
+  <main class="content">
+
+    <div class="narasi">
+      <span class="narasi-label">Tentang Eksperimen Ini</span>
+      <p>
+        Eksperimen ini bertujuan untuk menguji apakah <strong>reduksi dimensi memengaruhi akurasi klasifikasi</strong>, dan bagaimana dua algoritma klasifikasi yang berbeda merespons perubahan jumlah fitur. Dua algoritma yang digunakan adalah <strong>k-Nearest Neighbors (kNN)</strong> dan <strong>Naive Bayes</strong> &mdash; masing-masing memiliki cara kerja yang fundamental berbeda.
+      </p>
+      <p>
+        <strong>kNN</strong> mengklasifikasikan data berdasarkan kedekatan jarak (<em>distance-based</em>), di mana sebuah dokumen dikelompokkan sesuai dengan label mayoritas dari <em>k</em> tetangga terdekatnya di ruang fitur. <strong>Naive Bayes</strong>, sebaliknya, menggunakan pendekatan probabilistik berdasarkan Teorema Bayes, dengan asumsi bahwa setiap fitur bersifat independen satu sama lain (<em>feature independence</em>).
+      </p>
+      <p>
+        Eksperimen dilakukan dalam dua skenario. <strong>Pertama</strong>, reduksi dimensi menggunakan PCA secara bertahap (150, 100, 50, 20, dan 10 komponen). <strong>Kedua</strong>, seleksi fitur menggunakan metode <strong>Chi-Square (&chi;&sup2;)</strong> yang memilih kata-kata paling diskriminatif dari 6.000 hingga 500 kata teratas. Metrik evaluasi yang digunakan adalah <em>Classification Accuracy</em> (CA).
+      </p>
+    </div>
+
+    <h2>Skenario 1: Reduksi Dimensi dengan PCA</h2>
+    <p>
+      Tabel berikut menampilkan akurasi klasifikasi kNN dan Naive Bayes pada berbagai jumlah komponen PCA, beserta persentase informasi variansi yang dipertahankan:
+    </p>
+
+    <table class="experiment-table">
+      <thead>
+        <tr>
+          <th>Metode</th>
+          <th>Jumlah Komponen</th>
+          <th>Informasi Variansi (%)</th>
+          <th>Akurasi kNN (%)</th>
+          <th>Akurasi Naive Bayes (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Raw TF-IDF (Tanpa Reduksi)</td>
+          <td>7.424</td>
+          <td>100,00</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>PCA 150 Komponen</td>
+          <td>150</td>
+          <td>98,73</td>
+          <td>95,0</td>
+          <td>52,5</td>
+        </tr>
+        <tr>
+          <td>PCA 100 Komponen</td>
+          <td>100</td>
+          <td>80,48</td>
+          <td>87,5</td>
+          <td>77,5</td>
+        </tr>
+        <tr>
+          <td>PCA 50 Komponen</td>
+          <td>50</td>
+          <td>52,34</td>
+          <td class="highlight-best">100,0</td>
+          <td>72,5</td>
+        </tr>
+        <tr>
+          <td>PCA 20 Komponen</td>
+          <td>20</td>
+          <td>29,42</td>
+          <td>95,0</td>
+          <td>72,5</td>
+        </tr>
+        <tr>
+          <td>PCA 10 Komponen</td>
+          <td>10</td>
+          <td>18,66</td>
+          <td>67,5</td>
+          <td>80,0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="experiment-caption">Tabel 1. Akurasi klasifikasi pada berbagai jumlah komponen PCA</p>
+
+    <h2>Skenario 2: Seleksi Fitur dengan Chi-Square</h2>
+    <p>
+      Berbeda dengan PCA yang mentransformasi fitur, metode Chi-Square (&chi;&sup2;) bekerja dengan <strong>memilih kata-kata yang paling berkorelasi dengan label kelas</strong>. Kata-kata yang memiliki skor Chi-Square tertinggi dianggap paling diskriminatif untuk membedakan kategori Sport dan Finance.
+    </p>
+
+    <table class="experiment-table">
+      <thead>
+        <tr>
+          <th>Tahap</th>
+          <th>Jumlah Kata</th>
+          <th>Akurasi kNN (%)</th>
+          <th>Akurasi Naive Bayes (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Data Asli (7.424 kata)</td>
+          <td>7.424</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-6000</td>
+          <td>6.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-4000</td>
+          <td>4.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-2000</td>
+          <td>2.000</td>
+          <td class="highlight-best">100,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-1000</td>
+          <td>1.000</td>
+          <td>77,5</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+        <tr>
+          <td>Chi-Square Top-500</td>
+          <td>500</td>
+          <td>90,0</td>
+          <td class="highlight-best">100,0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="experiment-caption">Tabel 2. Akurasi klasifikasi pada berbagai tingkat seleksi fitur Chi-Square</p>
+
+    <h2>Analisis Hasil</h2>
+
+    <div class="narasi">
+      <span class="narasi-label">Temuan Utama</span>
+      <p>
+        Pada <strong>data asli tanpa reduksi</strong> (7.424 fitur), baik kNN maupun Naive Bayes sama-sama mencapai akurasi sempurna 100%. Ini menunjukkan bahwa kedua kategori berita (Sport dan Finance) memiliki perbedaan kosakata yang sangat jelas dan mudah dipisahkan.
+      </p>
+      <p>
+        Pada <strong>eksperimen PCA</strong>, kNN menunjukkan performa yang berfluktuasi &mdash; mencapai 100% pada 50 komponen namun turun ke 67,5% pada 10 komponen. Hal ini terjadi karena kNN sangat bergantung pada informasi jarak antar titik data, yang semakin banyak hilang ketika komponen direduksi terlalu drastis.
+      </p>
+      <p>
+        <strong>Naive Bayes</strong> pada PCA menunjukkan pola menarik: akurasinya cenderung meningkat saat komponen semakin sedikit (dari 52,5% pada 150 PC menjadi 80,0% pada 10 PC). Ini disebabkan asumsi <em>feature independence</em> pada Naive Bayes semakin terpenuhi ketika fitur-fitur hasil PCA bersifat orthogonal (saling tegak lurus). Namun pada 150 komponen, terlalu banyak komponen dengan variansi kecil justru menambah <em>noise</em> yang mengganggu estimasi probabilitas.
+      </p>
+      <p>
+        Pada <strong>eksperimen Chi-Square</strong>, Naive Bayes mempertahankan akurasi sempurna 100% di semua level seleksi fitur &mdash; menunjukkan robustness yang luar biasa. Sementara itu, kNN mengalami penurunan pada 1.000 kata (77,5%) namun kembali membaik pada 500 kata (90,0%). Pola ini mengindikasikan bahwa pada <em>threshold</em> 1.000 kata, terdapat fitur-fitur yang justru mengaburkan jarak antar kelas bagi kNN.
+      </p>
+    </div>
+
+    <div class="download-card">
+      <div class="download-info">
+        <strong>Notebook Eksperimen:</strong> Seluruh kode eksperimen lengkap (Jupyter Notebook)
+      </div>
+      <div class="download-actions">
+        <a href="05_eksperimen/EksperimenPCA-Klasifikasi.ipynb" class="btn-download" download>&#128229; Download Notebook (.ipynb)</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
+
+{buat_fab_menu("eksperimen")}
+</body>
+</html>
+'''
+
+with open("eksperimen.html", "w", encoding="utf-8") as f:
+    f.write(eksperimen_html)
+print(f"  -> eksperimen.html ({len(eksperimen_html.splitlines())} baris)")
+
+
+# ==============================================================================
+# DONE
+# ==============================================================================
+elapsed = time.time() - t0
+print(f"\nSelesai! 5 halaman website berhasil dibuat dalam {elapsed:.2f} detik.")
