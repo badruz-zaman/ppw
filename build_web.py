@@ -46,8 +46,8 @@ def buat_fab_menu(active_page):
 {items_html}
     </nav>
     <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
-      <span class="fab-icon-open">\u2630</span>
-      <span class="fab-icon-close">\u2715</span>
+      <div class="fab-moon"></div>
+      <span class="fab-close">\u2715</span>
     </button>
   </div>'''
 

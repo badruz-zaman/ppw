@@ -15,13 +15,13 @@ body {
 }
 
 /* ——————————————————————————————————————————————
-   FLOATING ACTION BUTTON (FAB) — Radial Menu
+   FLOATING ACTION BUTTON (FAB) — Moon Menu
    —————————————————————————————————————————————— */
 
 .fab-container {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  top: 24px;
+  right: 24px;
   z-index: 9000;
 }
 
@@ -29,7 +29,7 @@ body {
 .fab-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(10, 10, 30, 0.15);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -41,60 +41,90 @@ body {
   visibility: visible;
 }
 
-/* Tombol utama (lingkaran) */
+/* Tombol utama — Bulan sabit (crescent moon) */
 .fab-toggle {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: none;
-  background: #2a2a2a;
-  color: #fff;
-  font-size: 1.4rem;
+  background: #141425;
   cursor: pointer;
   position: relative;
   z-index: 10;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.06);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .fab-toggle:hover {
-  background: #444;
-  transform: scale(1.08);
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .fab-container.open .fab-toggle {
-  background: #555;
-  transform: rotate(90deg);
-}
-
-.fab-icon-open,
-.fab-icon-close {
-  position: absolute;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.fab-icon-close {
-  opacity: 0;
-  transform: rotate(-90deg);
-}
-
-.fab-container.open .fab-icon-open {
-  opacity: 0;
-  transform: rotate(90deg);
-}
-
-.fab-container.open .fab-icon-close {
-  opacity: 1;
   transform: rotate(0deg);
+  background: #1e1e38;
+}
+
+/* Bulan sabit — dibuat dengan dua lingkaran overlapping */
+.fab-moon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: -9px 3px 0 1px #e8c44a;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Bintang kecil dekorasi */
+.fab-toggle::before {
+  content: '✦';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.4rem;
+  color: rgba(232, 196, 74, 0.6);
+  transition: opacity 0.25s ease;
+}
+
+/* Ikon close (✕) */
+.fab-close {
+  position: absolute;
+  color: #e8c44a;
+  font-size: 1.2rem;
+  font-weight: 300;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Animasi buka: bulan hilang, ✕ muncul */
+.fab-container.open .fab-moon {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+
+.fab-container.open .fab-toggle::before {
+  opacity: 0;
+}
+
+.fab-container.open .fab-close {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
 }
 
 /* Menu container (nav) */
 .fab-menu {
   position: absolute;
-  bottom: 0;
+  top: 0;
   right: 0;
   width: 0;
   height: 0;
@@ -103,8 +133,8 @@ body {
 /* Individual menu items — lingkaran kecil */
 .fab-item {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
+  top: 2px;
+  right: 2px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -132,12 +162,8 @@ body {
 }
 
 .fab-item.active {
-  background: #2a2a2a;
-  border-color: #2a2a2a;
-}
-
-.fab-item.active .fab-emoji {
-  filter: grayscale(0);
+  background: #141425;
+  border-color: #141425;
 }
 
 /* Tooltip — label teks di sebelah kiri */
@@ -147,13 +173,13 @@ body {
   right: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
-  background: #2a2a2a;
-  color: #fff;
+  background: #141425;
+  color: #e8c44a;
   font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 5px 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 5px 12px;
   border-radius: 4px;
   white-space: nowrap;
   opacity: 0;
@@ -165,39 +191,39 @@ body {
   opacity: 1;
 }
 
-/* ——— Arc positions for 5 items (90° to 180° arc, radius ~100px) ——— */
-/* Item 1: 90° (straight up) */
+/* ——— Arc positions: top-right → fan out down-left (180° to 270°) ——— */
+/* Item 1: 180° (straight left) */
 .fab-container.open .fab-item:nth-child(1) {
-  --open-pos: translate(0px, -100px);
-  transform: translate(0px, -100px) scale(1);
+  --open-pos: translate(-100px, 0px);
+  transform: translate(-100px, 0px) scale(1);
   opacity: 1;
   transition-delay: 0ms;
 }
-/* Item 2: 112.5° */
+/* Item 2: 202.5° (left + slightly down) */
 .fab-container.open .fab-item:nth-child(2) {
-  --open-pos: translate(-38px, -92px);
-  transform: translate(-38px, -92px) scale(1);
+  --open-pos: translate(-92px, 38px);
+  transform: translate(-92px, 38px) scale(1);
   opacity: 1;
   transition-delay: 40ms;
 }
-/* Item 3: 135° (diagonal) */
+/* Item 3: 225° (diagonal down-left) */
 .fab-container.open .fab-item:nth-child(3) {
-  --open-pos: translate(-71px, -71px);
-  transform: translate(-71px, -71px) scale(1);
+  --open-pos: translate(-71px, 71px);
+  transform: translate(-71px, 71px) scale(1);
   opacity: 1;
   transition-delay: 80ms;
 }
-/* Item 4: 157.5° */
+/* Item 4: 247.5° (mostly down) */
 .fab-container.open .fab-item:nth-child(4) {
-  --open-pos: translate(-92px, -38px);
-  transform: translate(-92px, -38px) scale(1);
+  --open-pos: translate(-38px, 92px);
+  transform: translate(-38px, 92px) scale(1);
   opacity: 1;
   transition-delay: 120ms;
 }
-/* Item 5: 180° (straight left) */
+/* Item 5: 270° (straight down) */
 .fab-container.open .fab-item:nth-child(5) {
-  --open-pos: translate(-100px, 0px);
-  transform: translate(-100px, 0px) scale(1);
+  --open-pos: translate(0px, 100px);
+  transform: translate(0px, 100px) scale(1);
   opacity: 1;
   transition-delay: 160ms;
 }
@@ -892,7 +918,7 @@ footer {
   .download-card { flex-direction: column; align-items: flex-start; }
   .data-tabs { overflow-x: auto; }
   .data-tab { font-size: 0.75rem; padding: 8px 14px; white-space: nowrap; }
-  .fab-container { bottom: 20px; right: 20px; }
+  .fab-container { top: 16px; right: 16px; }
   .fab-toggle { width: 50px; height: 50px; font-size: 1.2rem; }
   .fab-item { width: 40px; height: 40px; font-size: 1rem; }
 }
