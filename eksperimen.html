@@ -255,7 +255,7 @@
           <tr>
             <td>Chi-Square Top-1000</td>
             <td>1.000</td>
-            <td>77,5</td>
+            <td>80,0</td>
             <td class="highlight-best">100,0</td>
           </tr>
           <tr>
@@ -267,7 +267,127 @@
         </tbody>
       </table>
     </div>
-    <p class="experiment-caption">Tabel 3. Akurasi klasifikasi pada berbagai tingkat seleksi fitur Chi-Square</p>
+    <p class="experiment-caption">Tabel 3. Perbandingan Classification Accuracy (CA) kNN vs Naive Bayes pada berbagai tingkat seleksi fitur Chi-Square</p>
+
+    <h3>Rincian Lengkap Metrik Evaluasi Seleksi Fitur Chi-Square (Orange Data Mining)</h3>
+    <p>
+      Berikut adalah rincian metrik evaluasi lengkap (AUC, CA, F1-Score, Precision, Recall, dan MCC) dari widget <em>Test and Score</em> Orange Data Mining untuk setiap tingkat seleksi fitur Chi-Square:
+    </p>
+
+    <div class="experiment-table-wrap">
+      <table class="experiment-table">
+        <thead>
+          <tr>
+            <th>Tahap Seleksi Fitur</th>
+            <th>Model</th>
+            <th>AUC</th>
+            <th>CA (Akurasi)</th>
+            <th>F1-Score</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>MCC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Chi-Square Top-6000</td>
+            <td><strong>Naive Bayes</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>kNN</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr class="highlight-row">
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Chi-Square Top-4000</td>
+            <td><strong>Naive Bayes</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>kNN</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr class="highlight-row">
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Chi-Square Top-2000</td>
+            <td><strong>Naive Bayes</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>kNN</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Chi-Square Top-1000</td>
+            <td><strong>Naive Bayes</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr>
+            <td>kNN</td>
+            <td>0,955</td>
+            <td>0,800 (80,0%)</td>
+            <td>0,795</td>
+            <td>0,830</td>
+            <td>0,800</td>
+            <td>0,629</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Chi-Square Top-500</td>
+            <td><strong>Naive Bayes</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+          </tr>
+          <tr>
+            <td>kNN</td>
+            <td>0,945</td>
+            <td>0,900 (90,0%)</td>
+            <td>0,899</td>
+            <td>0,917</td>
+            <td>0,900</td>
+            <td>0,816</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="experiment-caption">Tabel 4. Rincian metrik evaluasi Orange Data Mining pada seleksi fitur Chi-Square (Target: average over classes)</p>
 
     <h2>Analisis Hasil</h2>
 
@@ -286,7 +406,11 @@
         <strong>Naive Bayes</strong> menunjukkan karakteristik yang sangat menarik: pada <strong>150 komponen</strong>, akurasinya turun signifikan ke <strong>65,0%</strong> (F1: 0.601, MCC: 0.420). Hal ini mengindikasikan bahwa terlalu banyak komponen minor dengan variansi sangat kecil mengganggu estimasi distribusi probabilitas fitur pada Naive Bayes. Namun, saat jumlah komponen disederhanakan ke rentang 10–100 komponen, akurasi Naive Bayes melonjak stabil di kisaran <strong>90,0% – 97,5%</strong>, seiring dengan asumsi independensi fitur (<em>feature independence</em>) yang lebih terpenuhi pada komponen-komponen utama yang orthogonal.
       </p>
       <p>
-        Pada <strong>eksperimen Chi-Square</strong>, Naive Bayes mempertahankan akurasi sempurna 100% di semua level seleksi fitur &mdash; menunjukkan robustness yang luar biasa. Sementara itu, kNN mengalami penurunan pada 1.000 kata (77,5%) namun kembali membaik pada 500 kata (90,0%). Pola ini mengindikasikan bahwa pada <em>threshold</em> 1.000 kata, terdapat fitur-fitur yang justru mengaburkan jarak antar kelas bagi kNN.
+        Pada <strong>eksperimen Chi-Square</strong>, <strong>Naive Bayes mempertahankan akurasi sempurna 100,0%</strong> di semua level seleksi fitur (6.000 hingga 500 kata) &mdash; menunjukkan <em>robustness</em> luar biasa karena estimasi probabilitas kata kunci spesifik sudah cukup kuat mengunci keputusan kelas. Sementara itu, kNN mengalami penurunan pada 1.000 kata (80,0%) namun kembali membaik pada 500 kata (90,0%).
+      </p>
+      <p>
+        <strong>Mengapa Hasil pada 2.000, 4.000, dan 6.000 Kata Identik (100% Sempurna)?</strong><br>
+        Fenomena ini terjadi karena <strong>separabilitas kelas berita Sport dan Finance sangat tinggi</strong>. Kata-kata pembeda paling kuat (seperti istilah olahraga spesifik dan istilah perbankan/pasar modal) sudah terkumpul lengkap di dalam Top-2.000 kata. Ketika jumlah fitur ditingkatkan ke 4.000 dan 6.000 kata, fitur-fitur baru yang ditambahkan memiliki frekuensi dokumen yang sangat rendah atau berbobot TF-IDF kecil, sehingga tidak mampu mengubah probabilitas (Naive Bayes) maupun membalikkan tetangga terdekat (kNN) pada 40 dokumen data uji.
       </p>
     </div>
 
