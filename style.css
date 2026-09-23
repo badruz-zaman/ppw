@@ -773,14 +773,27 @@ body {
   background: #f0eee9;
 }
 
+.experiment-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0 28px;
+  border-radius: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.experiment-table-wrap .experiment-table {
+  margin: 0;
+}
+
 .experiment-table .highlight-best {
   background: #e8f5e9 !important;
   color: #1b5e20;
   font-weight: 700;
 }
 
-.experiment-table .highlight-row {
-  background: #fff8e1 !important;
+.experiment-table .highlight-row,
+.experiment-table tr.highlight-row td {
+  background: #fdfcee !important;
 }
 
 .experiment-caption {
