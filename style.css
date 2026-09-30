@@ -198,46 +198,54 @@ body {
 /* ——— Arc positions: top-right → fan out down-left (180° to 270°) ——— */
 /* Item 1: 180° (straight left) */
 .fab-container.open .fab-item:nth-child(1) {
-  --open-pos: translate(-100px, 0px);
-  transform: translate(-100px, 0px) scale(1);
+  --open-pos: translate(-104px, 0px);
+  transform: translate(-104px, 0px) scale(1);
   opacity: 1;
   transition-delay: 0ms;
 }
-/* Item 2: 202.5° (left + slightly down) */
+/* Item 2: 198° (left + slightly down) */
 .fab-container.open .fab-item:nth-child(2) {
-  --open-pos: translate(-92px, 38px);
-  transform: translate(-92px, 38px) scale(1);
+  --open-pos: translate(-99px, 32px);
+  transform: translate(-99px, 32px) scale(1);
   opacity: 1;
-  transition-delay: 40ms;
+  transition-delay: 30ms;
 }
-/* Item 3: 225° (diagonal down-left) */
+/* Item 3: 216° */
 .fab-container.open .fab-item:nth-child(3) {
-  --open-pos: translate(-71px, 71px);
-  transform: translate(-71px, 71px) scale(1);
+  --open-pos: translate(-84px, 61px);
+  transform: translate(-84px, 61px) scale(1);
   opacity: 1;
-  transition-delay: 80ms;
+  transition-delay: 60ms;
 }
-/* Item 4: 247.5° (mostly down) */
+/* Item 4: 234° */
 .fab-container.open .fab-item:nth-child(4) {
-  --open-pos: translate(-38px, 92px);
-  transform: translate(-38px, 92px) scale(1);
+  --open-pos: translate(-61px, 84px);
+  transform: translate(-61px, 84px) scale(1);
+  opacity: 1;
+  transition-delay: 90ms;
+}
+/* Item 5: 252° */
+.fab-container.open .fab-item:nth-child(5) {
+  --open-pos: translate(-32px, 99px);
+  transform: translate(-32px, 99px) scale(1);
   opacity: 1;
   transition-delay: 120ms;
 }
-/* Item 5: 270° (straight down) */
-.fab-container.open .fab-item:nth-child(5) {
-  --open-pos: translate(0px, 100px);
-  transform: translate(0px, 100px) scale(1);
+/* Item 6: 270° (straight down) */
+.fab-container.open .fab-item:nth-child(6) {
+  --open-pos: translate(0px, 104px);
+  transform: translate(0px, 104px) scale(1);
   opacity: 1;
-  transition-delay: 160ms;
+  transition-delay: 150ms;
 }
 
 /* Reverse stagger on close */
-.fab-container:not(.open) .fab-item:nth-child(1) { transition-delay: 120ms; }
-.fab-container:not(.open) .fab-item:nth-child(2) { transition-delay: 90ms; }
-.fab-container:not(.open) .fab-item:nth-child(3) { transition-delay: 60ms; }
-.fab-container:not(.open) .fab-item:nth-child(4) { transition-delay: 30ms; }
-.fab-container:not(.open) .fab-item:nth-child(5) { transition-delay: 0ms; }
+.fab-container:not(.open) .fab-item:nth-child(1) { transition-delay: 150ms; }
+.fab-container:not(.open) .fab-item:nth-child(2) { transition-delay: 120ms; }
+.fab-container:not(.open) .fab-item:nth-child(3) { transition-delay: 90ms; }
+.fab-container:not(.open) .fab-item:nth-child(4) { transition-delay: 60ms; }
+.fab-container:not(.open) .fab-item:nth-child(5) { transition-delay: 30ms; }
+.fab-container:not(.open) .fab-item:nth-child(6) { transition-delay: 0ms; }
 
 .fab-emoji {
   line-height: 1;

@@ -29,6 +29,7 @@ def buat_fab_menu(active_page):
         ("tfidf.html",      "TF-IDF",     "\U0001F4CA", "tfidf"),
         ("pca.html",        "PCA",        "\U0001F52C", "pca"),
         ("eksperimen.html", "Eksperimen", "\U0001F9EA", "eksperimen"),
+        ("skipgram.html",   "Skip-Gram",  "\U0001F9E0", "skipgram"),
     ]
     fab_items = []
     for i, (url, label, emoji, page_id) in enumerate(items):
@@ -99,6 +100,38 @@ def buat_matrix_preview(df, n_preview_cols=10):
         label_val = row_data[-1]
         badge_cls = "badge badge-1" if label_val == 1 else "badge badge-2"
         cells.append(f'<td class="col-matrix-label"><span class="{badge_cls}">{label_val}</span></td>')
+        rows.append("<tr>" + "".join(cells) + "</tr>")
+    tbody = "\n".join(rows)
+
+    return thead, tbody
+
+
+# HELPER: Generate preview table rows for Skip-Gram continuous vectors
+def buat_skipgram_matrix_preview(df, n_preview_cols=10):
+    """Generate thead + tbody HTML for Skip-Gram continuous feature columns + ellipsis + label."""
+    cols = df.columns.tolist()
+    feature_cols = [c for c in cols if c != 'label']
+    preview_cols = feature_cols[:n_preview_cols]
+    remaining = len(feature_cols) - n_preview_cols
+
+    th_parts = ['<th class="col-matrix-id">ID</th>']
+    for c in preview_cols:
+        th_parts.append(f'<th>{html.escape(str(c))}</th>')
+    if remaining > 0:
+        th_parts.append(f'<th class="col-ellipsis">... [{remaining:,} dimensi lainnya] ...</th>')
+    th_parts.append('<th class="col-matrix-label">Label</th>')
+    thead = "<tr>" + "".join(th_parts) + "</tr>"
+
+    rows = []
+    for idx, row_data in enumerate(df.itertuples(index=False), start=1):
+        cells = [f'<td class="col-matrix-id">{idx}</td>']
+        for val in row_data[:n_preview_cols]:
+            cells.append(f'<td>{val:.4f}</td>')
+        if remaining > 0:
+            cells.append('<td class="col-ellipsis">...</td>')
+        label_val = str(row_data[-1])
+        badge_cls = f"badge badge-{label_val.lower()}"
+        cells.append(f'<td class="col-matrix-label"><span class="{badge_cls}">{html.escape(label_val)}</span></td>')
         rows.append("<tr>" + "".join(cells) + "</tr>")
     tbody = "\n".join(rows)
 
@@ -962,7 +995,414 @@ print(f"  -> eksperimen.html ({len(eksperimen_html.splitlines())} baris)")
 
 
 # ==============================================================================
+# 6. GENERATE skipgram.html — Halaman Word2Vec Skip-Gram + Evaluasi Orange
+# ==============================================================================
+print("  Generating skipgram.html...")
+
+df_sg_v1 = pd.read_csv("06_skipgram/vektor_skipgram_versi_1.csv")
+df_sg_v2 = pd.read_csv("06_skipgram/vektor_skipgram_versi_2.csv")
+
+sg_v1_thead, sg_v1_tbody = buat_skipgram_matrix_preview(df_sg_v1, n_preview_cols=10)
+sg_v2_thead, sg_v2_tbody = buat_skipgram_matrix_preview(df_sg_v2, n_preview_cols=10)
+
+skipgram_html = f'''<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Representasi Word2Vec Skip-Gram — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Representasi Dokumen dengan Word2Vec Skip-Gram</h1>
+    <p class="subtitle">Transformasi fitur teks berita ke ruang vektor kontinu 100 dimensi menggunakan arsitektur neural Skip-Gram dan evaluasi performa klasifikasi di Orange Data Mining</p>
+  </div>
+
+  <main class="content">
+
+    <div class="narasi">
+      <span class="narasi-label">Konsep &amp; Teori Dasar Word Embedding</span>
+      <p>
+        Dalam pemrosesan bahasa alami (<em>Natural Language Processing</em>), metode berbasis frekuensi kata tradisional seperti <strong>TF-IDF</strong> (<em>Term Frequency&ndash;Inverse Document Frequency</em>) merepresentasikan dokumen dalam bentuk matriks yang sangat besar dan bersifat <strong>sparse</strong> (kebanyakan elemen bernilai 0). Pada dataset proyek ini, representasi TF-IDF menghasilkan ruang fitur sebesar <strong>7.424 dimensi</strong>. Kelemahan mendasar dari model representasi frekuensi adalah sifatnya yang <em>orthogonal</em> &mdash; model tidak memiliki pemahaman semantik bahwa kata &ldquo;saham&rdquo; memiliki keterkaitan erat dengan &ldquo;dividen&rdquo;, atau kata &ldquo;atlet&rdquo; berkaitan erat dengan &ldquo;pertandingan&rdquo;.
+      </p>
+      <p>
+        Untuk mengatasi keterbatasan tersebut, diperkenalkan paradigma <strong>Word Embedding</strong> melalui algoritma <strong>Word2Vec</strong> (Mikolov et al., 2013). Word2Vec didasarkan pada <em>Distributional Hypothesis</em> (J.R. Firth, 1957) yang menyatakan bahwa <em>&ldquo;a word is characterized by the company it keeps&rdquo;</em> &mdash; kata-kata yang muncul dalam konteks kalimat yang serupa cenderung memiliki makna semantik yang mirip pula.
+      </p>
+      <p>
+        Word2Vec memetakan setiap kata ke dalam ruang vektor laten kontinu berdimensi rendah (<em>d = 100 &ll; 7.424</em>). Berbeda dengan TF-IDF yang menghasilkan matriks jarang, vektor Word2Vec bersifat <strong>padat (dense)</strong> dan bernilai riil kontinu, di mana kedekatan makna semantik antar kata direfleksikan secara matematis melalui nilai <em>cosine similarity</em> atau jarak Euclidean.
+      </p>
+    </div>
+
+    <h2>Arsitektur Model: Skip-Gram</h2>
+    <p>
+      Word2Vec menyediakan dua varian arsitektur neural network utama: <strong>Continuous Bag-of-Words (CBOW)</strong> dan <strong>Skip-Gram</strong>. Pada penelitian/praktikum ini, arsitektur yang digunakan adalah <strong>Skip-Gram</strong>:
+    </p>
+
+    <div class="taxonomy-item">
+      <h4>Mekanisme Prediksi Terbalik (Target &rarr; Konteks)</h4>
+      <p>
+        Jika CBOW memprediksi satu kata target dari sekumpulan kata-kata konteks di sekelilingnya, maka arsitektur <strong>Skip-Gram membalik mekanisme tersebut</strong>: model menerima satu kata target <em>w<sub>t</sub></em> pada lapisan input (<em>input layer</em>), kemudian memprediksi probabilitas kemunculan kata-kata konteks <em>w<sub>t+j</sub></em> di sekitarnya dalam radius jendela tertentu (<em>context window</em>).
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Ketangguhan terhadap Kosakata Jarang (Rare Words)</h4>
+      <p>
+        Skip-Gram sangat unggul untuk dataset berukuran kecil hingga menengah karena setiap pasangan kata target dan kata konteks diperlakukan sebagai satu sampel pelatihan tersendiri. Hal ini memberikan kesempatan yang seimbang bagi kata-kata yang frekuensinya relatif jarang (<em>rare words</em>) untuk memperbarui bobot vektor representasinya secara optimal tanpa tertutupi oleh kata-kata yang sangat sering muncul.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Fungsi Objektif &amp; Optimasi Matematis</h4>
+      <p>
+        Tujuan pelatihan Skip-Gram adalah memaksimalkan rata-rata log-probabilitas berikut di seluruh korpus teks dengan panjang <em>T</em> kata dan ukuran jendela konteks <em>c</em>:
+        <br /><br />
+        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+          L(&theta;) = (1 / T) &times; &sum;<sub>t=1</sub><sup>T</sup> &sum;<sub>-c &le; j &le; c, j &ne; 0</sub> log P(w<sub>t+j</sub> | w<sub>t</sub>)
+        </span>
+        <br />
+        Probabilitas kondisional dasar dihitung menggunakan fungsi <strong>Softmax</strong>:
+        <br /><br />
+        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+          P(w<sub>O</sub> | w<sub>I</sub>) = exp(v'&lsquo;<sub>wO</sub><sup>T</sup> &middot; v<sub>wI</sub>) / &sum;<sub>w=1</sub><sup>W</sup> exp(v'&lsquo;<sub>w</sub><sup>T</sup> &middot; v<sub>wI</sub>)
+        </span>
+        <br />
+        Untuk mempercepat komputasi dari penyebut Softmax yang melibatkan seluruh kosakata <em>W</em>, pustaka <strong>Gensim</strong> mengimplementasikan optimasi <strong>Negative Sampling (NEG)</strong>, di mana model hanya memperbarui bobot untuk pasangan konteks aktual ditambah sejumlah kecil kata acak sebagai sampel negatif.
+      </p>
+    </div>
+
+    <h2>Konfigurasi Hyperparameter Pelatihan</h2>
+    <p>Model Skip-Gram dilatih menggunakan modul <code>gensim.models.Word2Vec</code> dengan parameter arsitektur sebagai berikut:</p>
+    <ol>
+      <li><strong>vector_size = 100:</strong> Menetapkan dimensi ruang laten kontinu sebanyak 100 dimensi. Ukuran ini ideal untuk menangkap semantik topik tanpa membebani kompleksitas komputasi.</li>
+      <li><strong>window = 5:</strong> Jendela konteks sebesar 5 kata ke kiri dan 5 kata ke kanan dari kata target (total jangkauan rentang konteks maksimum adalah 10 kata).</li>
+      <li><strong>min_count = 1:</strong> Ambang batas frekuensi kata minimal bernilai 1, memastikan seluruh kosakata yang ada pada 200 dokumen berita tetap dipertahankan tanpa ada kata yang dieliminasi.</li>
+      <li><strong>sg = 1:</strong> Menandakan pemilihan arsitektur Skip-Gram (jika <code>sg = 0</code> adalah arsitektur CBOW).</li>
+      <li><strong>epochs = 30:</strong> Jumlah siklus iterasi penuh (epoch) pelatihan model neural network pada seluruh korpus teks.</li>
+      <li><strong>seed = 42 &amp; workers = 1:</strong> Mengunci pengacakan inisialisasi bobot agar proses pelatihan sepenuhnya deterministik dan dapat direproduksi secara konsisten (<em>fully reproducible</em>).</li>
+    </ol>
+
+    <h2>Siklus Proses: Dari Teks Mentah ke Vektor Dokumen</h2>
+    <p>Transformasi artikel berita mentah menjadi dataset tabular siap latih dilakukan melalui enam tahapan komputasi yang terstruktur:</p>
+    <ol>
+      <li>
+        <strong>Tahap 1 &mdash; Preprocessing Teks (Dua Skenario Eksperimen):</strong>
+        <br />Teks mentah dibersihkan dari seluruh tanda baca (<em>punctuation</em>) dan dilakukan normalisasi terhadap sekitar 80 kata tidak baku / kata gaul bahasa Indonesia (misal: <em>yg &rarr; yang, gak &rarr; tidak, bgt &rarr; sangat</em>) serta pembersihan spasi berlebih. Pada tahap ini, eksperimen dibagi menjadi dua skenario komparatif:
+        <ul style="margin: 8px 0 8px 24px; font-size: 0.98rem; line-height: 1.7; color: #444;">
+          <li><strong>Versi 1 (Dengan Angka):</strong> Karakter angka (0&ndash;9) dipertahankan di dalam teks kalimat. Format huruf besar/kecil (kapital) tidak diubah (tanpa <em>case folding</em>).</li>
+          <li><strong>Versi 2 (Tanpa Angka):</strong> Seluruh karakter angka (0&ndash;9) dihapus secara total dari korpus menggunakan ekspresi reguler. Huruf kapital tetap dipertahankan.</li>
+        </ul>
+      </li>
+      <li><strong>Tahap 2 &mdash; Tokenisasi:</strong> Setiap artikel berita dipecah menjadi deretan token kata (<em>list of words</em>) yang menyusun korpus kalimat.</li>
+      <li><strong>Tahap 3 &mdash; Pelatihan Skip-Gram:</strong> Korpus kalimat token dimasukkan ke model Word2Vec Skip-Gram untuk melatih matriks vektor kata 100 dimensi.</li>
+      <li>
+        <strong>Tahap 4 &mdash; Document Embedding via Mean Pooling:</strong>
+        <br />Karena Word2Vec menghasilkan representasi untuk masing-masing kata, representasi tingkat dokumen dibentuk menggunakan teknik <strong>Mean Pooling (Perataan Vektor)</strong>:
+        <br /><br />
+        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+          d&#8407;<sub>k</sub> = (1 / N<sub>k</sub>) &times; &sum;<sub>i=1</sub><sup>N<sub>k</sub></sup> v&#8407;(w<sub>i</sub>)
+        </span>
+        <br />
+        Di mana <em>d&#8407;<sub>k</sub> &isin; &#8477;<sup>100</sup></em> adalah vektor akhir dokumen ke-<em>k</em>, <em>N<sub>k</sub></em> adalah total kata dalam dokumen tersebut, dan <em>v&#8407;(w<sub>i</sub>)</em> adalah vektor kata dari model Skip-Gram. Setiap dimensi dari dokumen merupakan nilai rata-rata dari dimensi yang bersesuaian pada seluruh kata penyusunnya. Jika dokumen kosong, diisi dengan vektor nol.
+      </li>
+      <li><strong>Tahap 5 &mdash; Ekspor Matriks Tabular:</strong> Menggabungkan 100 fitur kontinu (<code>dim_1</code> sampai <code>dim_100</code>) bersama kolom target <code>label</code> (kategori <em>sport</em> dan <em>finance</em>), kemudian diekspor ke file <code>vektor_skipgram_versi_1.csv</code> dan <code>vektor_skipgram_versi_2.csv</code>.</li>
+      <li><strong>Tahap 6 &mdash; Klasifikasi pada Orange Data Mining:</strong> Memuat dataset CSV ke dalam perangkat lunak <strong>Orange Data Mining</strong> untuk menguji performa klasifikasi menggunakan algoritma <strong>k-Nearest Neighbors (kNN)</strong> dan <strong>Naive Bayes</strong> dengan metode <em>Random Sampling</em> (80% train, 20% test, 20 kali pengulangan / <em>repeat</em>, stratified).</li>
+    </ol>
+
+    <h2>Dataset Matriks Vektor Dokumen (Skip-Gram 100 Dimensi)</h2>
+    <p>
+      Berikut adalah pratinjau data representasi vektor dokumen hasil pemodelan Skip-Gram untuk kedua varian eksperimen preprocessing. Setiap dokumen diwakili oleh 100 dimensi numerik kontinu beserta label kategorinya:
+    </p>
+
+    <div class="data-section">
+      <div class="data-tabs">
+        <button class="data-tab active" onclick="switchTab(this, 'sg-versi-1')">Versi 1: Dengan Angka (200 dokumen)</button>
+        <button class="data-tab" onclick="switchTab(this, 'sg-versi-2')">Versi 2: Tanpa Angka (200 dokumen)</button>
+      </div>
+
+      <div class="tab-panel" id="sg-versi-1">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>Skip-Gram Versi 1:</strong> 200 baris &times; 101 kolom (100 dimensi fitur + target label, mempertahankan angka)
+          </div>
+          <div class="download-actions">
+            <a href="06_skipgram/vektor_skipgram_versi_1.csv" class="btn-download" download>&#128196; Download .csv</a>
+            <a href="06_skipgram/Klasifikasi_SKIP-GRA_Angka.ipynb" class="btn-download btn-download-alt" download>&#128229; Download Notebook (.ipynb)</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{sg_v1_thead}</thead>
+            <tbody>
+{sg_v1_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">* Menampilkan 200 baris dokumen dengan 10 dimensi awal (dim_1 &ndash; dim_10), 90 dimensi lainnya diwakili ellipsis (...), dan kolom target label.</p>
+      </div>
+
+      <div class="tab-panel" id="sg-versi-2" style="display: none;">
+        <div class="download-card">
+          <div class="download-info">
+            <strong>Skip-Gram Versi 2:</strong> 200 baris &times; 101 kolom (100 dimensi fitur + target label, angka dihapus)
+          </div>
+          <div class="download-actions">
+            <a href="06_skipgram/vektor_skipgram_versi_2.csv" class="btn-download" download>&#128196; Download .csv</a>
+            <a href="06_skipgram/Klasifikasi_SKIP-GRAM_Tanpa Angka.ipynb" class="btn-download btn-download-alt" download>&#128229; Download Notebook (.ipynb)</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table matrix-table">
+            <thead>{sg_v2_thead}</thead>
+            <tbody>
+{sg_v2_tbody}
+            </tbody>
+          </table>
+        </div>
+        <p class="preview-note">* Menampilkan 200 baris dokumen dengan 10 dimensi awal (dim_1 &ndash; dim_10), 90 dimensi lainnya diwakili ellipsis (...), dan kolom target label.</p>
+      </div>
+    </div>
+
+    <h2>Hasil Eksperimen Klasifikasi pada Orange Data Mining</h2>
+    <p>
+      Evaluasi performa klasifikasi dilakukan menggunakan widget <em>Test and Score</em> pada Orange Data Mining. Pengujian menerapkan skenario <strong>Random Sampling</strong> dengan proporsi <strong>80% data latih (training set)</strong> dan <strong>20% data uji (testing set)</strong>, dilakukan pengulangan sebanyak <strong>20 kali (Repeat: 20)</strong> serta opsi <strong>Stratified</strong> aktif.
+    </p>
+    <p>
+      Karena 20% dari 200 dokumen adalah 40 dokumen data uji per iterasi, maka total sampel uji yang dievaluasi secara kumulatif adalah <strong>40 &times; 20 = 800 sampel data uji</strong>. Tabel berikut menampilkan perbandingan lengkap performa model kNN dan Naive Bayes antara Versi 1 (Dengan Angka) dan Versi 2 (Tanpa Angka):
+    </p>
+
+    <div class="experiment-table-wrap">
+      <table class="experiment-table">
+        <thead>
+          <tr>
+            <th>Skenario Preprocessing</th>
+            <th>Model Klasifikasi</th>
+            <th>AUC</th>
+            <th>CA (Akurasi)</th>
+            <th>F1-Score</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>MCC</th>
+            <th>Salah Prediksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Versi 1<br>(Dengan Angka)</td>
+            <td><strong>k-Nearest Neighbors (kNN)</strong></td>
+            <td>0,992</td>
+            <td>0,963 (96,3%)</td>
+            <td>0,962</td>
+            <td>0,963</td>
+            <td>0,963</td>
+            <td>0,925</td>
+            <td>30 / 800</td>
+          </tr>
+          <tr>
+            <td>Naive Bayes</td>
+            <td>0,991</td>
+            <td>0,959 (95,9%)</td>
+            <td>0,959</td>
+            <td>0,959</td>
+            <td>0,959</td>
+            <td>0,918</td>
+            <td>33 / 800</td>
+          </tr>
+          <tr class="highlight-row">
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Versi 2<br>(Tanpa Angka)</td>
+            <td><strong>Naive Bayes 🌟 (Pemenang Mutlak)</strong></td>
+            <td class="highlight-best">0,996</td>
+            <td class="highlight-best">0,979 (97,9%)</td>
+            <td class="highlight-best">0,979</td>
+            <td class="highlight-best">0,979</td>
+            <td class="highlight-best">0,979</td>
+            <td class="highlight-best">0,958</td>
+            <td class="highlight-best">17 / 800</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>k-Nearest Neighbors (kNN)</td>
+            <td>0,991</td>
+            <td>0,965 (96,5%)</td>
+            <td>0,965</td>
+            <td>0,965</td>
+            <td>0,965</td>
+            <td>0,930</td>
+            <td>28 / 800</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="experiment-caption">Tabel 1. Perbandingan Metrik Evaluasi Klasifikasi Word2Vec Skip-Gram pada Orange Data Mining (Target: average over classes)</p>
+
+    <h3>Rincian Confusion Matrix (Total 800 Sampel Evaluasi)</h3>
+    <p>
+      Berikut adalah rincian matriks konfusi (<em>Confusion Matrix</em>) yang dihasilkan dari widget Orange Data Mining, mencakup jumlah prediksi benar dan salah untuk kategori <em>finance</em> dan <em>sport</em>:
+    </p>
+
+    <div class="experiment-table-wrap">
+      <table class="experiment-table">
+        <thead>
+          <tr>
+            <th>Versi Preprocessing</th>
+            <th>Model</th>
+            <th>Kelas Aktual</th>
+            <th>Prediksi: Finance</th>
+            <th>Prediksi: Sport</th>
+            <th>Total Aktual</th>
+            <th>Akurasi per Kelas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="4" style="vertical-align: middle; font-weight: 600;">Versi 1<br>(Dengan Angka)</td>
+            <td rowspan="2" style="vertical-align: middle;">Naive Bayes</td>
+            <td>Finance</td>
+            <td>388</td>
+            <td>12</td>
+            <td>400</td>
+            <td>97,00%</td>
+          </tr>
+          <tr>
+            <td>Sport</td>
+            <td>21</td>
+            <td>379</td>
+            <td>400</td>
+            <td>94,75%</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle;">kNN</td>
+            <td>Finance</td>
+            <td>386</td>
+            <td>14</td>
+            <td>400</td>
+            <td>96,50%</td>
+          </tr>
+          <tr>
+            <td>Sport</td>
+            <td>16</td>
+            <td>384</td>
+            <td>400</td>
+            <td>96,00%</td>
+          </tr>
+          <tr class="highlight-row">
+            <td rowspan="4" style="vertical-align: middle; font-weight: 600;">Versi 2<br>(Tanpa Angka)</td>
+            <td rowspan="2" style="vertical-align: middle;"><strong>Naive Bayes 🌟</strong></td>
+            <td class="highlight-best">Finance</td>
+            <td class="highlight-best">395</td>
+            <td class="highlight-best">5</td>
+            <td class="highlight-best">400</td>
+            <td class="highlight-best">98,75%</td>
+          </tr>
+          <tr class="highlight-row">
+            <td class="highlight-best">Sport</td>
+            <td class="highlight-best">12</td>
+            <td class="highlight-best">388</td>
+            <td class="highlight-best">400</td>
+            <td class="highlight-best">97,00%</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle;">kNN</td>
+            <td>Finance</td>
+            <td>387</td>
+            <td>13</td>
+            <td>400</td>
+            <td>96,75%</td>
+          </tr>
+          <tr>
+            <td>Sport</td>
+            <td>15</td>
+            <td>385</td>
+            <td>400</td>
+            <td>96,25%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="experiment-caption">Tabel 2. Rincian Confusion Matrix Klasifikasi Orange Data Mining (20 Iterasi &times; 40 Data Uji = 800 Sampel)</p>
+
+    <h2>Analisis &amp; Temuan Ilmiah</h2>
+
+    <div class="narasi">
+      <span class="narasi-label">Analisis 1 &mdash; Mengapa Menghapus Angka (Versi 2) Meningkatkan Akurasi?</span>
+      <p>
+        Berdasarkan hasil pengujian empiris, <strong>Versi 2 (Tanpa Angka) menghasilkan performa yang superior</strong> dibandingkan Versi 1 pada kedua algoritma klasifikasi. Peningkatan paling signifikan dialami oleh <strong>Naive Bayes yang akurasinya melompat sebesar +2,0%</strong> (dari 95,9% menjadi <strong>97,9%</strong>), dengan jumlah kesalahan prediksi yang terpangkas drastis hampir separuhnya (dari 33 kesalahan menjadi hanya 17 kesalahan dari 800 pengujian).
+      </p>
+      <p>
+        Fenomena ini terjadi karena <strong>karakter angka bertindak sebagai <em>noise</em> (derau) dalam pemodelan semantik</strong>. Pada artikel berita, angka-angka seperti tanggal (&ldquo;2024&rdquo;), waktu pertandingan (&ldquo;90&rdquo;), skor (&ldquo;2-1&rdquo;), ataupun nilai nominal transaksi keuangan (&ldquo;500&rdquo;, &ldquo;100&rdquo;) sering kali muncul di kedua kategori berita (baik sport maupun finance). Ketika angka dipertahankan (Versi 1), Skip-Gram mengalokasikan kapasitas ruang laten 100 dimensi untuk memelajari relasi konteks palsu (<em>spurious context correlations</em>) antara kata-kata topik dan angka-angka acak tersebut.
+      </p>
+      <p>
+        Saat angka dihapus secara total (Versi 2), model Skip-Gram murni memusatkan pembelajaran pada kata-kata konten inti (seperti <em>dividen, laba, bursa, saham</em> untuk Finance vs <em>gol, pemain, pelatih, juara</em> untuk Sport). Akibatnya, pemisahan distribusi fitur antar kedua kelas menjadi jauh lebih tajam dan kompak.
+      </p>
+    </div>
+
+    <div class="narasi">
+      <span class="narasi-label">Analisis 2 &mdash; Pembalikan Model Terbaik (kNN vs Naive Bayes)</span>
+      <p>
+        Eksperimen ini menunjukkan dinamika yang sangat menarik terkait perilaku kedua algoritma klasifikasi terhadap kualitas representasi fitur:
+      </p>
+      <p>
+        Pada <strong>Versi 1 (Dengan Angka)</strong>, <strong>kNN sedikit lebih unggul dibanding Naive Bayes (96,3% vs 95,9%)</strong>. k-Nearest Neighbors mengandalkan jarak metrik spasial (<em>Euclidean distance</em>) antar titik dokumen. Adanya derau angka yang tersebar secara lokal tidak langsung merusak keputusan mayoritas tetangga terdekat. Sebaliknya, Naive Bayes yang mengasumsikan distribusi normal (Gaussian) pada setiap fitur kontinu sedikit terdistorsi oleh variansi nilai fitur yang diakibatkan oleh kata-kata angka.
+      </p>
+      <p>
+        Namun pada <strong>Versi 2 (Tanpa Angka)</strong>, situasinya berbalik total: <strong>Naive Bayes menjadi model terbaik secara mutlak dengan akurasi 97,9% dan AUC 0,996</strong>. Tanpa gangguan vektor angka, distribusi densitas probabilitas setiap fitur kontinu 100 dimensi menjadi sangat konsisten dan memenuhi asumsi separabilitas Bayes secara optimal, menghasilkan klasifikasi kelas Finance dengan presisi mendekati sempurna (395 dari 400 sampel finance diprediksi tepat).
+      </p>
+    </div>
+
+    <div class="narasi">
+      <span class="narasi-label">Analisis 3 &mdash; Efisiensi Representasi Skip-Gram (Dense 100D) vs TF-IDF &amp; PCA</span>
+      <p>
+        Jika dibandingkan dengan eksperimen pembobotan sebelumnya:
+      </p>
+      <p>
+        Model <strong>TF-IDF</strong> membutuhkan <strong>7.424 dimensi</strong> matriks sparse untuk mencapai akurasi tinggi, yang sangat boros memori dan rentan terhadap <em>curse of dimensionality</em>. Sementara itu, teknik reduksi dimensi <strong>PCA</strong> membutuhkan komputasi dekomposisi nilai singular (SVD) yang kompleks untuk menurunkan dimensi ke 10&ndash;150 komponen.
+      </p>
+      <p>
+        Sebaliknya, <strong>Word2Vec Skip-Gram dengan agregasi Mean Pooling</strong> secara langsung menghasilkan ruang representasi padat (<em>dense</em>) hanya dengan <strong>100 dimensi</strong>. Meskipun dimensinya 74 kali lebih ringkas dibandingkan TF-IDF mentah, Skip-Gram mampu mempertahankan akurasi klasifikasi yang luar biasa tinggi (<strong>97,9%</strong> pada Naive Bayes). Hal ini membuktikan efisiensi superior dari representasi berbasis <em>neural word embeddings</em> dalam menangkap esensi semantik dokumen teks.
+      </p>
+    </div>
+
+    <div class="download-card">
+      <div class="download-info">
+        <strong>Berkas Eksperimen Lengkap:</strong> Dataset vektor CSV dan Jupyter Notebook untuk kedua versi preprocessing
+      </div>
+      <div class="download-actions">
+        <a href="06_skipgram/vektor_skipgram_versi_1.csv" class="btn-download" download>&#128196; Vektor CSV Versi 1</a>
+        <a href="06_skipgram/vektor_skipgram_versi_2.csv" class="btn-download" download>&#128196; Vektor CSV Versi 2</a>
+        <a href="06_skipgram/Klasifikasi_SKIP-GRA_Angka.ipynb" class="btn-download btn-download-alt" download>&#128229; Notebook Versi 1</a>
+        <a href="06_skipgram/Klasifikasi_SKIP-GRAM_Tanpa Angka.ipynb" class="btn-download btn-download-alt" download>&#128229; Notebook Versi 2</a>
+      </div>
+    </div>
+
+    <div class="references">
+      <h3>Daftar Pustaka</h3>
+      <ol>
+        <li>Mikolov, T., Chen, K., Corrado, G., &amp; Dean, J. (2013). <em>Efficient Estimation of Word Representations in Vector Space</em>. arXiv preprint arXiv:1301.3781.</li>
+        <li>Mikolov, T., Sutskever, I., Chen, K., Corrado, G. S., &amp; Dean, J. (2013). Distributed representations of words and phrases and their compositionality. <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 26, 3111&ndash;3119.</li>
+        <li>Firth, J. R. (1957). A synopsis of linguistic theory, 1930-1955. <em>Studies in Linguistic Analysis</em>, 1&ndash;32.</li>
+        <li>Rehurek, R., &amp; Sojka, P. (2010). Software framework for topic modelling with large corpora. In <em>Proceedings of the LREC 2010 Workshop on New Challenges for NLP Frameworks</em> (pp. 45&ndash;50).</li>
+        <li>Dem&scaron;ar, J., Curk, T., Erjavec, A., Gorup, &Ccaron;., Ho&ccaron;evar, T., Milutinovi&ccaron;, M., ... &amp; Zupan, B. (2013). Orange: data mining toolbox in Python. <em>Journal of Machine Learning Research</em>, 14(1), 2349&ndash;2353.</li>
+      </ol>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
+
+{buat_fab_menu("skipgram")}
+{TAB_SCRIPT}
+</body>
+</html>
+'''
+
+with open("skipgram.html", "w", encoding="utf-8") as f:
+    f.write(skipgram_html)
+print(f"  -> skipgram.html ({len(skipgram_html.splitlines())} baris)")
+
+
+# ==============================================================================
 # DONE
 # ==============================================================================
 elapsed = time.time() - t0
-print(f"\nSelesai! 5 halaman website berhasil dibuat dalam {elapsed:.2f} detik.")
+print(f"\nSelesai! 6 halaman website berhasil dibuat dalam {elapsed:.2f} detik.")
