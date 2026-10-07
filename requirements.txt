@@ -1,0 +1,7 @@
+streamlit
+trafilatura
+gensim
+scikit-learn
+joblib
+pandas
+numpy
