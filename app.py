@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 # ──────────────────────────────────────────────
-# 2. Custom CSS (Rapi, Bersih, & Tanpa Merusak Ikon)
+# 2. Custom CSS 
 # ──────────────────────────────────────────────
 st.markdown("""
 <style>

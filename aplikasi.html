@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplikasi Klasifikasi Berita (Streamlit Cloud) — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page-header">
+    <div class="kicker">PRODUK &amp; IMPLEMENTASI SISTEM AKHIR</div>
+    <h1>Aplikasi Klasifikasi Berita Real-Time</h1>
+    <p class="subtitle">
+      Penerapan inferensi model Word2Vec Skip-Gram dan Machine Learning (kNN &amp; Naive Bayes) pada artikel portal berita Detik.com menggunakan Streamlit Community Cloud.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="author">
+    <div class="name">Badruz Zaman Ash Sholih</div>
+    <div class="meta">240411100140 &middot; <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
+  </div>
+
+  <main class="content content-narrow">
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         HERO LIVE STATUS CARD
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <div class="app-showcase-card" style="margin-top: 10px;">
+      <div class="app-badge-live">
+        <span class="live-dot"></span> LIVE ONLINE DI STREAMLIT CLOUD (24 JAM)
+      </div>
+      <h2 class="app-showcase-title" style="font-size: 1.85rem; margin-bottom: 12px;">
+        Aplikasi Siap Diuji Secara Langsung
+      </h2>
+      <p class="app-showcase-desc">
+        Aplikasi web ini telah berhasil di-deploy ke infrastruktur cloud publik dan terintegrasi langsung dengan repositori GitHub. Anda dapat menguji klasifikasi artikel berita kategori <strong>Sport</strong> dan <strong>Finance</strong> secara instan cukup dengan menempelkan (paste) tautan URL berita.
+      </p>
+      <div class="app-showcase-actions">
+        <a href="https://sport-finance-news-classification.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn-cta-primary" style="font-size: 0.95rem; padding: 12px 26px;">
+          🚀 Buka Aplikasi Streamlit (Live Demo) &nearr;
+        </a>
+        <a href="https://github.com/badruz-zaman/ppw" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary">
+          💻 Repositori GitHub &nearr;
+        </a>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         LATAR BELAKANG & TUJUAN
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>1. Latar Belakang &amp; Tujuan Implementasi</h2>
+    <p>
+      Penelitian dan eksperimen penambangan web (<em>Web Mining</em>) sering kali hanya berhenti pada tahap analisis statistik di dalam <em>notebook</em> atau perangkat lunak desktop (seperti Orange Data Mining). Padahal, nilai utilitas tertinggi dari suatu model pembelajaran mesin terletak pada kemampuannya memberikan inferensi secara waktu-nyata (<em>real-time inference</em>) terhadap data baru yang belum pernah dilihat sebelumnya.
+    </p>
+    <p>
+      Oleh karena itu, seluruh rangkaian tahapan dari proyek tugas ini &mdash; mulai dari <strong>Pengumpulan Data (Crawling)</strong>, <strong>Pra-pemrosesan Teks</strong>, <strong>Ekstraksi Representasi Vektor Skip-Gram</strong>, hingga <strong>Pelatihan Model Klasifikasi</strong> &mdash; diintegrasikan menjadi satu kesatuan produk perangkat lunak berbasis web interaktif.
+    </p>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         ARSITEKTUR INFERENSI WAKTU-NYATA
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>2. Alur Arsitektur Inferensi (Pipeline)</h2>
+    <p>
+      Ketika pengguna memasukkan URL artikel berita Detik.com ke dalam aplikasi web, sistem mengeksekusi 5 tahapan komputasi berurutan secara otomatis:
+    </p>
+
+    <div class="narasi" style="margin: 24px 0 28px;">
+      <h3 style="margin-top: 0; font-size: 1.15rem; color: #111;">Diagram Alir Pemrosesan Prediksi:</h3>
+      <ol style="margin-left: 20px; line-height: 1.8; font-size: 0.92rem;">
+        <li>
+          <strong>Pengunduhan &amp; Ekstraksi Konten (Trafilatura):</strong> URL diunduh secara live via HTTP. Algoritma Trafilatura secara otomatis mengisolasi teks berita inti dan membuang elemen non-konten (iklan, navigasi menu, widget rekomendasi, dan kolom komentar).
+        </li>
+        <li>
+          <strong>Pra-pemrosesan &amp; Tokenisasi (Regex):</strong> Teks artikel dibersihkan dari tanda baca dan kata-kata tidak baku (<em>slang removal</em>). Pembersihan disesuaikan dengan varian yang dipilih:
+          <ul>
+            <li><em>Versi 1 (Dengan Angka):</em> Menggunakan ekspresi reguler <code>\b\w+\b</code>.</li>
+            <li><em>Versi 2 (Tanpa Angka):</em> Menggunakan ekspresi reguler <code>\b[a-zA-Z]+\b</code>.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Agregasi Fitur Dokumen (Mean Pooling 100D):</strong> Setiap token kata dicari koordinat vektor bobotnya di dalam model Skip-Gram (<code>model_sg.wv[kata]</code>). Seluruh vektor kata dijumlahkan dan dirata-ratakan menjadi satu vektor dokumen tunggal berdimensi 100.
+        </li>
+        <li>
+          <strong>Inferensi Algoritma Klasifikasi:</strong> Vektor dokumen 100 dimensi dimasukkan ke dalam model klasifikasi terpilih (<strong>kNN</strong> berbasis jarak Euclidean atau <strong>Gaussian Naive Bayes</strong> berbasis probabilitas kontinu) yang telah dimuat dari berkas <code>.joblib</code>.
+        </li>
+        <li>
+          <strong>Visualisasi Hasil &amp; Metrik Evaluasi:</strong> Antarmuka menampilkan label kategori terpilih (⚽ <em>Sport</em> atau 💰 <em>Finance</em>) lengkap dengan 6 metrik performa model (AUC, Akurasi CA, F1-Score, Precision, Recall, MCC) berdasarkan hasil pengujian empiris data uji di Orange Data Mining.
+        </li>
+      </ol>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         FITUR-FITUR UTAMA APLIKASI
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>3. Fitur Unggulan Aplikasi</h2>
+
+    <div class="taxonomy-item">
+      <h4>⚡ Real-time Web Scraping Tanpa Copy-Paste Manual</h4>
+      <p>
+        Pengguna tidak perlu menyalin dan menempelkan ratusan kata dari portal berita secara manual. Cukup masukkan link URL artikel Detik.com, sistem akan membaca dan mengekstrak judul, tanggal publikasi, serta seluruh badan artikel secara otomatis.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>🎛️ Fleksibilitas Pemilihan Dua Varian Preprocessing</h4>
+      <p>
+        Melalui panel sidebar, pengguna dapat secara bebas menguji perbedaan perilaku inferensi antara <strong>Versi 1 (Dengan Angka)</strong> dan <strong>Versi 2 (Tanpa Angka)</strong> untuk mengamati langsung bagaimana kehadiran angka mempengaruhi koordinat representasi dokumen.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>🤖 Pemilihan Algoritma Machine Learning</h4>
+      <p>
+        Menyediakan opsi perbandingan antara algoritma <strong>k-Nearest Neighbors (kNN)</strong> dengan $k=5$ tetangga terdekat berbobot metrik Euclidean, serta algoritma <strong>Gaussian Naive Bayes</strong>.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>📊 Kartu Metrik Evaluasi Komprehensif</h4>
+      <p>
+        Di bawah hasil prediksi, aplikasi menyajikan 6 kartu metrik terukur yang diperoleh dari pengujian <em>Test on test data</em> (160 Data Latih / 40 Data Uji) di Orange Data Mining:
+      </p>
+      <ul>
+        <li><strong>AUC (Area Under ROC Curve):</strong> Mengukur ketajaman model dalam membedakan kedua kelas secara menyeluruh.</li>
+        <li><strong>CA (Classification Accuracy):</strong> Persentase kebenaran klasifikasi terhadap seluruh data uji.</li>
+        <li><strong>F1-Score, Precision, &amp; Recall:</strong> Evaluasi keseimbangan prediksi kelas positif dan negatif.</li>
+        <li><strong>MCC (Matthews Correlation Coefficient):</strong> Koefisien korelasi kualitas prediksi biner bahkan pada kondisi data yang paling ketat.</li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         PANDUAN PENGUJIAN UNTUK DOSEN / PENGUJI
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>4. Panduan Pengujian untuk Penguji / Dosen</h2>
+    <p>
+      Untuk mendemonstrasikan keandalan sistem klasifikasi, Anda dapat mengikuti langkah-langkah pengujian berikut secara langsung pada aplikasi:
+    </p>
+
+    <div class="download-card" style="margin: 20px 0;">
+      <div class="download-info">
+        <strong>Langkah 1:</strong> Buka portal berita <em>Detik.com</em> (kanal <a href="https://sport.detik.com" target="_blank" rel="noopener">sport.detik.com</a> atau <a href="https://finance.detik.com" target="_blank" rel="noopener">finance.detik.com</a>).<br>
+        <strong>Langkah 2:</strong> Salin (copy) link URL salah satu artikel berita aktif.<br>
+        <strong>Langkah 3:</strong> Tempelkan (paste) link tersebut pada kolom <em>"Masukkan Link URL Berita"</em> di aplikasi.<br>
+        <strong>Langkah 4:</strong> Tentukan kombinasi varian Skip-Gram dan algoritma di sidebar, lalu klik tombol <strong>"🚀 Klasifikasikan Berita"</strong>.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         SPESIFIKASI TEKNIS & DEPLOYMENT
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>5. Spesifikasi Teknis Lingkungan Deployment</h2>
+
+    <table class="experiment-table">
+      <thead>
+        <tr>
+          <th>Komponen Sistem</th>
+          <th>Teknologi / Spesifikasi</th>
+          <th>Peran &amp; Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Hosting Platform</td>
+          <td><strong>Streamlit Community Cloud</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Infrastruktur cloud kontainer berbasis Linux (Ubuntu) aktif 24 jam nonstop.</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Runtime Python</td>
+          <td><strong>Python 3.11 Environment</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Menjamin kompatibilitas paket biner (<em>pre-built wheels</em>) untuk library komputasi C/C++.</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Natural Language Processing</td>
+          <td><strong>Gensim 4.4.0 (Word2Vec)</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Memuat arsitektur Skip-Gram 100 dimensi yang telah dilatih secara bersih.</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Machine Learning Engine</td>
+          <td><strong>Scikit-Learn 1.6.1 &amp; Joblib</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Inferensi instan model kNN dan Naive Bayes tanpa perlu melatih ulang model di server.</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Web Scraping Engine</td>
+          <td><strong>Trafilatura 2.3.1</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Ekstraksi teks bersih dan metadata judul/tanggal secara asinkronus.</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; text-align: left; padding-left: 16px;">Version Control</td>
+          <td><strong>GitHub Repository (CI/CD Auto-Deploy)</strong></td>
+          <td style="text-align: left; padding: 10px 14px;">Sinkronisasi otomatis setiap kali perubahan kode di-push ke branch <code>main</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         NAVIGASI BAWAH
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0ddd8;">
+      <a href="skipgram.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #141425; text-decoration: none;">
+        &larr; Kembali ke Laporan: Word2Vec Skip-Gram
+      </a>
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #64748b; text-decoration: none;">
+        Beranda Pengantar Web Mining &rarr;
+      </a>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════════
+       FLOATING ACTION BUTTON (FAB) — MENU BULAT TETAP BERSIH (6 ITEM ASLI)
+  ══════════════════════════════════════════════════════════════════════════════ -->
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+      <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
+      <a href="crawling.html" class="fab-item" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
+      <a href="tfidf.html" class="fab-item" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
+      <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
+      <a href="eksperimen.html" class="fab-item" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
+      <a href="skipgram.html" class="fab-item" data-tooltip="Skip-Gram" style="--i:5"><span class="fab-emoji">🧠</span></a>
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <div class="fab-moon"></div>
+      <span class="fab-close">✕</span>
+    </button>
+  </div>
+
+</body>
+</html>
