@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Klasifikasi Berita (Sport &amp; Finance) — Badruz Zaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page-header">
+    <div class="kicker">WEBSITE KLASIFIKASI BERITA</div>
+    <h1>Klasifikasi Berita Sport &amp; Finance</h1>
+    <p class="subtitle">
+      Penjelasan aplikasi klasifikasi berita Detik.com, tahapan pengerjaan dari awal sampai akhir, serta hasil klasifikasi Versi 1 dan Versi 2 menggunakan kNN dan Naive Bayes.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="author">
+    <div class="name">Badruz Zaman Ash Sholih</div>
+    <div class="meta">240411100140 &middot; <a href="mailto:badruzzamannnnn@gmail.com">badruzzamannnnn@gmail.com</a></div>
+  </div>
+
+  <main class="content content-narrow">
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         TENTANG APLIKASI
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>1. Tentang Aplikasi</h2>
+    <p>
+      Aplikasi ini menentukan kategori sebuah artikel berita, yaitu <strong>Sport</strong> atau <strong>Finance</strong>, hanya dengan memasukkan link artikel dari <em>Detik.com</em>. Aplikasi mengambil isi berita secara otomatis, membersihkannya, mengubahnya menjadi vektor angka dengan <em>Word2Vec Skip-Gram</em>, lalu memprediksi kategorinya dengan <strong>k-Nearest Neighbors (kNN)</strong> atau <strong>Naive Bayes</strong>.
+    </p>
+    <p>
+      Pengguna dapat memilih dua varian preprocessing (<strong>Versi 1: dengan angka</strong> dan <strong>Versi 2: tanpa angka</strong>) serta dua algoritma klasifikasi, sehingga empat kombinasi model dapat dibandingkan langsung.
+    </p>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         TAHAPAN
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>2. Tahapan dari Awal sampai Akhir</h2>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 1 &mdash; Pengumpulan Data (Crawling)</h4>
+      <p>
+        Daftar link artikel dikumpulkan dari halaman indeks <em>sport.detik.com</em> dan <em>finance.detik.com</em> menggunakan <code>requests</code> dan <code>lxml</code> (XPath). Isi tiap artikel diekstrak dengan <code>Trafilatura</code> yang otomatis membuang iklan dan menu navigasi. Hasilnya <strong>200 artikel</strong> (100 Sport dan 100 Finance) dengan kolom <code>id</code>, <code>isi_berita</code>, dan <code>label</code>.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 2 &mdash; Preprocessing Teks</h4>
+      <p>
+        Teks dipecah menjadi kata, tanda baca dibuang, dan kata tidak baku (misalnya <em>yg, gak, bgt</em>) dihapus. Dibuat dua skenario:
+      </p>
+      <ul>
+        <li><strong>Versi 1 (Dengan Angka):</strong> angka dipertahankan.</li>
+        <li><strong>Versi 2 (Tanpa Angka):</strong> seluruh angka dibuang.</li>
+      </ul>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 3 &mdash; Pembagian Data (Split 80:20)</h4>
+      <p>
+        Dataset dibagi menjadi <strong>160 data latih</strong> dan <strong>40 data uji</strong> secara terstratifikasi (<code>random_state=42</code>), sehingga proporsi Sport dan Finance seimbang di kedua bagian.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 4 &mdash; Pelatihan Word2Vec Skip-Gram</h4>
+      <p>
+        Skip-Gram dilatih <strong>hanya pada data latih</strong> dengan <code>vector_size=100</code>, <code>window=5</code>, <code>min_count=1</code>, <code>sg=1</code>, dan <code>epochs=30</code>. Setiap kata diwakili oleh 100 angka yang menggambarkan maknanya.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 5 &mdash; Vektor Dokumen (Mean Pooling)</h4>
+      <p>
+        Vektor seluruh kata dalam satu artikel dirata-ratakan menjadi <strong>satu vektor berdimensi 100</strong>. Dengan cara ini, artikel pendek maupun panjang memiliki ukuran representasi yang sama. Hasilnya matriks latih 160 &times; 100 dan matriks uji 40 &times; 100.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 6 &mdash; Pelatihan &amp; Penyimpanan Model Klasifikasi</h4>
+      <p>
+        Model <strong>kNN</strong> (k=5, jarak Euclidean) dan <strong>Gaussian Naive Bayes</strong> dilatih pada vektor dokumen, lalu disimpan bersama model Skip-Gram ke folder <code>models/</code> agar aplikasi tidak perlu melatih ulang.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 7 &mdash; Prediksi pada Aplikasi</h4>
+      <p>
+        Saat pengguna memasukkan link, aplikasi mengunduh dan mengekstrak artikel dengan Trafilatura, membersihkan teks sesuai varian, menghitung vektor dokumen, lalu model terpilih memprediksi kategorinya. Hasil ditampilkan bersama metrik evaluasi model.
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         HASIL VERSI 1 & VERSI 2
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>3. Hasil Klasifikasi: Versi 1 dan Versi 2</h2>
+    <p>
+      Evaluasi dilakukan di <strong>Orange Data Mining</strong> dengan skenario <em>Test on test data</em>: model dilatih pada 160 data latih dan diuji pada 40 data uji yang belum pernah dilihat model.
+    </p>
+
+    <div class="experiment-table-wrap">
+      <table class="experiment-table">
+        <thead>
+          <tr>
+            <th>Skenario Preprocessing</th>
+            <th>Model Klasifikasi</th>
+            <th>AUC</th>
+            <th>CA (Akurasi)</th>
+            <th>F1-Score</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>MCC</th>
+            <th>Hasil Prediksi Benar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Versi 1<br>(Dengan Angka)</td>
+            <td><strong>k-Nearest Neighbors (kNN)</strong></td>
+            <td>0,989</td>
+            <td>0,925 (92,5%)</td>
+            <td>0,925</td>
+            <td>0,935</td>
+            <td>0,925</td>
+            <td>0,860</td>
+            <td>37 / 40 data uji benar</td>
+          </tr>
+          <tr>
+            <td><strong>Naive Bayes</strong></td>
+            <td>1,000</td>
+            <td>0,975 (97,5%)</td>
+            <td>0,975</td>
+            <td>0,976</td>
+            <td>0,975</td>
+            <td>0,951</td>
+            <td>39 / 40 data uji benar</td>
+          </tr>
+          <tr class="highlight-row">
+            <td rowspan="2" style="vertical-align: middle; font-weight: 600;">Versi 2<br>(Tanpa Angka)</td>
+            <td><strong>k-Nearest Neighbors (kNN) 🌟</strong></td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000 (100,0%)</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">1,000</td>
+            <td class="highlight-best">40 / 40 data uji benar (100% Sempurna)</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Naive Bayes</strong></td>
+            <td>1,000</td>
+            <td>0,975 (97,5%)</td>
+            <td>0,975</td>
+            <td>0,976</td>
+            <td>0,975</td>
+            <td>0,951</td>
+            <td>39 / 40 data uji benar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="experiment-caption">Tabel 1. Metrik Evaluasi Klasifikasi Berita Versi 1 dan Versi 2 (Test on test data, 40 Data Uji)</p>
+
+    <div class="narasi">
+      <span class="narasi-label">Perbandingan Versi 1 vs Versi 2</span>
+      <p>
+        Menghapus angka (Versi 2) menaikkan akurasi <strong>kNN dari 92,5% menjadi 100%</strong>. Angka seperti tanggal, skor, dan nominal muncul di kedua kategori berita sehingga menjadi <em>noise</em> bagi kNN yang bekerja berdasarkan jarak. <strong>Naive Bayes</strong> tidak berubah dan tetap <strong>97,5%</strong> pada kedua versi karena lebih tahan terhadap angka.
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         HASIL KNN & NAIVE BAYES
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2>4. Hasil Klasifikasi: kNN dan Naive Bayes</h2>
+
+    <div class="taxonomy-item">
+      <h4>k-Nearest Neighbors (kNN)</h4>
+      <p>
+        Mengklasifikasikan artikel berdasarkan <strong>5 tetangga terdekat</strong> (jarak Euclidean) di ruang 100 dimensi.
+      </p>
+      <ul>
+        <li><strong>Versi 1:</strong> akurasi 92,5% (37 dari 40 benar).</li>
+        <li><strong>Versi 2:</strong> akurasi 100% (40 dari 40 benar).</li>
+        <li>Sangat dipengaruhi ada atau tidaknya angka pada teks.</li>
+      </ul>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Naive Bayes (Gaussian)</h4>
+      <p>
+        Mengklasifikasikan artikel berdasarkan <strong>probabilitas</strong> dengan asumsi setiap fitur berdistribusi normal.
+      </p>
+      <ul>
+        <li><strong>Versi 1:</strong> akurasi 97,5% (39 dari 40 benar).</li>
+        <li><strong>Versi 2:</strong> akurasi 97,5% (39 dari 40 benar).</li>
+        <li>Stabil di kedua versi dengan AUC sempurna 1,000.</li>
+      </ul>
+    </div>
+
+    <div class="narasi">
+      <span class="narasi-label">Kesimpulan</span>
+      <p>
+        Kombinasi terbaik adalah <strong>Versi 2 (Tanpa Angka) dengan kNN</strong> yang mencapai akurasi 100%. Seluruh kombinasi lain tetap berperforma tinggi (minimal 92,5%), sehingga representasi Skip-Gram 100 dimensi terbukti efektif membedakan berita Sport dan Finance.
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
+         NAVIGASI BAWAH
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0ddd8;">
+      <a href="skipgram.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #141425; text-decoration: none;">
+        &larr; Kembali ke Laporan: Word2Vec Skip-Gram
+      </a>
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #64748b; text-decoration: none;">
+        Beranda Pengantar Web Mining &rarr;
+      </a>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2026 Badruz Zaman &middot; 240411100140</footer>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════════
+       FLOATING ACTION BUTTON (FAB) — MENU BULAT TETAP BERSIH (6 ITEM ASLI)
+  ══════════════════════════════════════════════════════════════════════════════ -->
+  <div class="fab-container" id="fabNav">
+    <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
+    <nav class="fab-menu">
+      <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
+      <a href="crawling.html" class="fab-item" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
+      <a href="tfidf.html" class="fab-item" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
+      <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
+      <a href="eksperimen.html" class="fab-item" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
+      <a href="skipgram.html" class="fab-item" data-tooltip="Skip-Gram" style="--i:5"><span class="fab-emoji">🧠</span></a>
+    </nav>
+    <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
+      <div class="fab-moon"></div>
+      <span class="fab-close">✕</span>
+    </button>
+  </div>
+
+</body>
+</html>
