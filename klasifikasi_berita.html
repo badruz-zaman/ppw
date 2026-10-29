@@ -39,58 +39,69 @@
     <!-- ══════════════════════════════════════════════════════════════════════════════
          TAHAPAN
     ══════════════════════════════════════════════════════════════════════════════ -->
-    <h2>2. Tahapan dari Awal sampai Akhir</h2>
+    <h2>2. Tahapan Kerja Aplikasi</h2>
+    <p>
+      Tahapan berikut mengikuti alur program aplikasi (<code>app.py</code>), dari aplikasi dibuka sampai hasil klasifikasi tampil di layar.
+    </p>
 
     <div class="taxonomy-item">
-      <h4>Tahap 1 &mdash; Pengumpulan Data (Crawling)</h4>
+      <h4>Tahap 1 &mdash; Memuat Model</h4>
       <p>
-        Daftar link artikel dikumpulkan dari halaman indeks <em>sport.detik.com</em> dan <em>finance.detik.com</em> menggunakan <code>requests</code> dan <code>lxml</code> (XPath). Isi tiap artikel diekstrak dengan <code>Trafilatura</code> yang otomatis membuang iklan dan menu navigasi. Hasilnya <strong>200 artikel</strong> (100 Sport dan 100 Finance) dengan kolom <code>id</code>, <code>isi_berita</code>, dan <code>label</code>.
+        Saat aplikasi dibuka, enam berkas model di folder <code>models/</code> dimuat ke memori: model <strong>Skip-Gram</strong>, <strong>kNN</strong>, dan <strong>Naive Bayes</strong> untuk masing-masing Versi 1 dan Versi 2. Pemuatan hanya dilakukan sekali dengan <code>@st.cache_resource</code>, sehingga aplikasi tidak melatih ulang model dan tidak memuat ulang berkas setiap kali tombol ditekan.
       </p>
     </div>
 
     <div class="taxonomy-item">
-      <h4>Tahap 2 &mdash; Preprocessing Teks</h4>
+      <h4>Tahap 2 &mdash; Pengguna Memilih Model dan Memasukkan Link</h4>
       <p>
-        Teks dipecah menjadi kata, tanda baca dibuang, dan kata tidak baku (misalnya <em>yg, gak, bgt</em>) dihapus. Dibuat dua skenario:
+        Pada sidebar, pengguna memilih <strong>varian Skip-Gram</strong> (Versi 1 dengan angka atau Versi 2 tanpa angka) dan <strong>algoritma klasifikasi</strong> (kNN atau Naive Bayes). Pengguna kemudian menempelkan link artikel Detik.com pada kolom input dan menekan tombol <strong>Klasifikasikan Berita</strong>.
+      </p>
+    </div>
+
+    <div class="taxonomy-item">
+      <h4>Tahap 3 &mdash; Mengambil Isi Artikel (Trafilatura)</h4>
+      <p>
+        Fungsi <code>ambil_berita()</code> menjalankan tiga langkah <code>Trafilatura</code>:
       </p>
       <ul>
-        <li><strong>Versi 1 (Dengan Angka):</strong> angka dipertahankan.</li>
-        <li><strong>Versi 2 (Tanpa Angka):</strong> seluruh angka dibuang.</li>
+        <li><code>fetch_url()</code> mengunduh halaman dari link.</li>
+        <li><code>extract()</code> mengambil teks isi berita dan membuang iklan serta menu navigasi.</li>
+        <li><code>extract_metadata()</code> mengambil judul dan tanggal artikel.</li>
       </ul>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>Tahap 3 &mdash; Pembagian Data (Split 80:20)</h4>
       <p>
-        Dataset dibagi menjadi <strong>160 data latih</strong> dan <strong>40 data uji</strong> secara terstratifikasi (<code>random_state=42</code>), sehingga proporsi Sport dan Finance seimbang di kedua bagian.
+        Jika halaman gagal diunduh atau teks kurang dari 50 karakter, aplikasi menampilkan pesan kesalahan dan proses dihentikan.
       </p>
     </div>
 
     <div class="taxonomy-item">
-      <h4>Tahap 4 &mdash; Pelatihan Word2Vec Skip-Gram</h4>
+      <h4>Tahap 4 &mdash; Preprocessing Teks</h4>
       <p>
-        Skip-Gram dilatih <strong>hanya pada data latih</strong> dengan <code>vector_size=100</code>, <code>window=5</code>, <code>min_count=1</code>, <code>sg=1</code>, dan <code>epochs=30</code>. Setiap kata diwakili oleh 100 angka yang menggambarkan maknanya.
+        Fungsi <code>preprocess_teks()</code> memecah teks menjadi kata dengan <code>re.findall</code>, sehingga tanda baca dan spasi berlebih otomatis terbuang. Kata yang termasuk daftar kata tidak baku (misalnya <em>yg, gak, bgt</em>) kemudian dihapus. Pola yang dipakai bergantung pada varian pilihan:
       </p>
+      <ul>
+        <li><strong>Versi 1 (Dengan Angka):</strong> pola <code>\b\w+\b</code>, angka dipertahankan.</li>
+        <li><strong>Versi 2 (Tanpa Angka):</strong> pola <code>\b[a-zA-Z]+\b</code>, angka dibuang.</li>
+      </ul>
     </div>
 
     <div class="taxonomy-item">
       <h4>Tahap 5 &mdash; Vektor Dokumen (Mean Pooling)</h4>
       <p>
-        Vektor seluruh kata dalam satu artikel dirata-ratakan menjadi <strong>satu vektor berdimensi 100</strong>. Dengan cara ini, artikel pendek maupun panjang memiliki ukuran representasi yang sama. Hasilnya matriks latih 160 &times; 100 dan matriks uji 40 &times; 100.
+        Fungsi <code>hitung_vektor_dokumen()</code> mencari vektor 100 dimensi tiap kata pada model Skip-Gram, lalu merata-ratakannya dengan <code>np.mean</code> menjadi <strong>satu vektor berdimensi 100</strong> untuk seluruh artikel. Kata yang tidak dikenal model dilewati. Dengan cara ini, artikel pendek maupun panjang memiliki ukuran representasi yang sama.
       </p>
     </div>
 
     <div class="taxonomy-item">
-      <h4>Tahap 6 &mdash; Pelatihan &amp; Penyimpanan Model Klasifikasi</h4>
+      <h4>Tahap 6 &mdash; Prediksi Kategori</h4>
       <p>
-        Model <strong>kNN</strong> (k=5, jarak Euclidean) dan <strong>Gaussian Naive Bayes</strong> dilatih pada vektor dokumen, lalu disimpan bersama model Skip-Gram ke folder <code>models/</code> agar aplikasi tidak perlu melatih ulang.
+        Vektor dokumen dimasukkan ke model klasifikasi pilihan pengguna melalui <code>predict()</code>. <strong>kNN</strong> menentukan kategori dari 5 tetangga terdekat (jarak Euclidean), sedangkan <strong>Naive Bayes</strong> memilih kategori dengan probabilitas tertinggi. Keluarannya berupa label <em>sport</em> atau <em>finance</em>.
       </p>
     </div>
 
     <div class="taxonomy-item">
-      <h4>Tahap 7 &mdash; Prediksi pada Aplikasi</h4>
+      <h4>Tahap 7 &mdash; Menampilkan Hasil</h4>
       <p>
-        Saat pengguna memasukkan link, aplikasi mengunduh dan mengekstrak artikel dengan Trafilatura, membersihkan teks sesuai varian, menghitung vektor dokumen, lalu model terpilih memprediksi kategorinya. Hasil ditampilkan bersama metrik evaluasi model.
+        Aplikasi menampilkan judul, tanggal, tautan sumber, dan isi artikel, lalu kartu hasil prediksi (hijau untuk <strong>Sport</strong>, emas untuk <strong>Finance</strong>). Di bawahnya tampil enam metrik evaluasi model yang dipilih (AUC, CA, F1-Score, Precision, Recall, MCC) dari pengujian di Orange Data Mining.
       </p>
     </div>
 
