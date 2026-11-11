@@ -18,6 +18,10 @@ body {
    FLOATING ACTION BUTTON (FAB) — Moon Menu
    —————————————————————————————————————————————— */
 
+/* ——————————————————————————————————————————————
+   FLOATING HAMBURGER MENU (Garis Tiga)
+   —————————————————————————————————————————————— */
+
 .fab-container {
   position: fixed;
   top: 24px;
@@ -29,10 +33,12 @@ body {
 .fab-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 30, 0.15);
+  background: rgba(10, 10, 30, 0.25);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
   z-index: -1;
 }
 
@@ -41,214 +47,147 @@ body {
   visibility: visible;
 }
 
-/* Tombol utama — Bulan sabit (crescent moon) */
+/* Tombol utama — Icon Garis Tiga (Hamburger) */
 .fab-toggle {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: none;
   background: #141425;
   cursor: pointer;
   position: relative;
   z-index: 10;
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.06);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.25s ease;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .fab-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.1);
-}
-
-.fab-container.open .fab-toggle {
-  transform: rotate(0deg);
+  transform: scale(1.06);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
   background: #1e1e38;
 }
 
-/* Bulan sabit — dibuat dengan dua lingkaran overlapping */
-.fab-moon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: transparent;
-  box-shadow: -9px 3px 0 1px #e8c44a;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+.fab-container.open .fab-toggle {
+  background: #252542;
 }
 
-/* Bintang kecil dekorasi */
-.fab-toggle::before {
-  content: '✦';
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 0.4rem;
-  color: rgba(232, 196, 74, 0.6);
-  transition: opacity 0.25s ease;
+/* 3 Garis Hamburger */
+.fab-hamburger {
+  width: 20px;
+  height: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
 }
 
-/* Ikon close (✕) */
-.fab-close {
-  position: absolute;
-  color: #e8c44a;
-  font-size: 1.2rem;
-  font-weight: 300;
+.fab-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #e8c44a;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+/* Animasi garis 3 berubah menjadi ✕ ketika dibuka */
+.fab-container.open .fab-hamburger span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.fab-container.open .fab-hamburger span:nth-child(2) {
   opacity: 0;
-  transform: rotate(-90deg) scale(0.5);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scaleX(0);
 }
 
-/* Animasi buka: bulan hilang, ✕ muncul */
-.fab-container.open .fab-moon {
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.3);
+.fab-container.open .fab-hamburger span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-.fab-container.open .fab-toggle::before {
-  opacity: 0;
-}
-
-.fab-container.open .fab-close {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-/* Menu container (nav) */
+/* Menu Dropdown Panel */
 .fab-menu {
   position: absolute;
-  top: 0;
+  top: 56px;
   right: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Individual menu items — lingkaran kecil */
-.fab-item {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1.5px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 1.15rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 230px;
+  background: #141425;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transform: translate(0, 0) scale(0.4);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              opacity 0.25s ease,
-              background 0.15s ease,
-              border-color 0.15s ease;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transform-origin: top right;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   z-index: 5;
 }
 
+.fab-container.open .fab-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.fab-menu-header {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  padding: 8px 12px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 4px;
+}
+
+/* Item navigasi di dalam dropdown */
+.fab-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #cbd5e1;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
 .fab-item:hover {
-  background: #f3f0eb;
-  border-color: #bbb;
-  transform: var(--open-pos) scale(1.12) !important;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  transform: translateX(-2px);
 }
 
 .fab-item.active {
-  background: #141425;
-  border-color: #141425;
-}
-
-/* Tooltip — glassmorphism style */
-.fab-item::before {
-  content: attr(data-tooltip);
-  position: absolute;
-  right: calc(100% + 12px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #222;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
+  background: rgba(232, 196, 74, 0.15);
+  color: #e8c44a;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
 }
-
-.fab-item:hover::before {
-  opacity: 1;
-}
-
-/* ——— Arc positions: top-right → fan out down-left (180° to 270°) ——— */
-/* Item 1: 180° (straight left) */
-.fab-container.open .fab-item:nth-child(1) {
-  --open-pos: translate(-104px, 0px);
-  transform: translate(-104px, 0px) scale(1);
-  opacity: 1;
-  transition-delay: 0ms;
-}
-/* Item 2: 198° (left + slightly down) */
-.fab-container.open .fab-item:nth-child(2) {
-  --open-pos: translate(-99px, 32px);
-  transform: translate(-99px, 32px) scale(1);
-  opacity: 1;
-  transition-delay: 30ms;
-}
-/* Item 3: 216° */
-.fab-container.open .fab-item:nth-child(3) {
-  --open-pos: translate(-84px, 61px);
-  transform: translate(-84px, 61px) scale(1);
-  opacity: 1;
-  transition-delay: 60ms;
-}
-/* Item 4: 234° */
-.fab-container.open .fab-item:nth-child(4) {
-  --open-pos: translate(-61px, 84px);
-  transform: translate(-61px, 84px) scale(1);
-  opacity: 1;
-  transition-delay: 90ms;
-}
-/* Item 5: 252° */
-.fab-container.open .fab-item:nth-child(5) {
-  --open-pos: translate(-32px, 99px);
-  transform: translate(-32px, 99px) scale(1);
-  opacity: 1;
-  transition-delay: 120ms;
-}
-/* Item 6: 270° (straight down) */
-.fab-container.open .fab-item:nth-child(6) {
-  --open-pos: translate(0px, 104px);
-  transform: translate(0px, 104px) scale(1);
-  opacity: 1;
-  transition-delay: 150ms;
-}
-
-/* Reverse stagger on close */
-.fab-container:not(.open) .fab-item:nth-child(1) { transition-delay: 150ms; }
-.fab-container:not(.open) .fab-item:nth-child(2) { transition-delay: 120ms; }
-.fab-container:not(.open) .fab-item:nth-child(3) { transition-delay: 90ms; }
-.fab-container:not(.open) .fab-item:nth-child(4) { transition-delay: 60ms; }
-.fab-container:not(.open) .fab-item:nth-child(5) { transition-delay: 30ms; }
-.fab-container:not(.open) .fab-item:nth-child(6) { transition-delay: 0ms; }
 
 .fab-emoji {
+  font-size: 1.05rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+}
+
+.fab-label {
+  flex: 1;
+  white-space: nowrap;
 }
 
 /* ——————————————————————————————————————————————
@@ -1101,6 +1040,6 @@ footer {
   .data-tabs { overflow-x: auto; }
   .data-tab { font-size: 0.75rem; padding: 8px 14px; white-space: nowrap; }
   .fab-container { top: 16px; right: 16px; }
-  .fab-toggle { width: 50px; height: 50px; font-size: 1.2rem; }
-  .fab-item { width: 40px; height: 40px; font-size: 1rem; }
+  .fab-toggle { width: 44px; height: 44px; }
+  .fab-menu { width: 210px; top: 52px; }
 }

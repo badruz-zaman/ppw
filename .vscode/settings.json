@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/enWebmining/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/enWebmining/Lib/site-packages"
+  ]
+}
+

@@ -290,16 +290,21 @@
   <div class="fab-container" id="fabNav">
     <div class="fab-overlay" onclick="document.getElementById('fabNav').classList.remove('open')"></div>
     <nav class="fab-menu">
-    <a href="index.html" class="fab-item" data-tooltip="Pengantar" style="--i:0"><span class="fab-emoji">📖</span></a>
-    <a href="crawling.html" class="fab-item" data-tooltip="Crawling" style="--i:1"><span class="fab-emoji">🕷️</span></a>
-    <a href="tfidf.html" class="fab-item active" data-tooltip="TF-IDF" style="--i:2"><span class="fab-emoji">📊</span></a>
-    <a href="pca.html" class="fab-item" data-tooltip="PCA" style="--i:3"><span class="fab-emoji">🔬</span></a>
-    <a href="eksperimen.html" class="fab-item" data-tooltip="Eksperimen" style="--i:4"><span class="fab-emoji">🧪</span></a>
-    <a href="skipgram.html" class="fab-item" data-tooltip="Skip-Gram" style="--i:5"><span class="fab-emoji">🧠</span></a>
+      <div class="fab-menu-header">Navigasi Modul</div>
+      <a href="index.html" class="fab-item"><span class="fab-emoji">📖</span><span class="fab-label">Pengantar</span></a>
+      <a href="crawling.html" class="fab-item"><span class="fab-emoji">🕷️</span><span class="fab-label">Crawling</span></a>
+      <a href="tfidf.html" class="fab-item active"><span class="fab-emoji">📊</span><span class="fab-label">TF-IDF</span></a>
+      <a href="pca.html" class="fab-item"><span class="fab-emoji">🔬</span><span class="fab-label">PCA</span></a>
+      <a href="eksperimen.html" class="fab-item"><span class="fab-emoji">🧪</span><span class="fab-label">Eksperimen</span></a>
+      <a href="skipgram.html" class="fab-item"><span class="fab-emoji">🧠</span><span class="fab-label">Skip-Gram</span></a>
+      <a href="graf.html" class="fab-item"><span class="fab-emoji">🕸️</span><span class="fab-label">Analisis Graf</span></a>
     </nav>
     <button class="fab-toggle" onclick="document.getElementById('fabNav').classList.toggle('open')" aria-label="Menu navigasi">
-      <div class="fab-moon"></div>
-      <span class="fab-close">✕</span>
+      <div class="fab-hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </button>
   </div>
 
