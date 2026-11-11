@@ -1,16 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap');
-
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+*,
+*::before,
+*::after,
+body, h1, h2, h3, h4, h5, h6, p, a, div, span, table, th, td, button, li, ul, ol, input, select, textarea, code, pre,
+.kicker, .subtitle, .meta, .name, .narasi-label, .btn-download, .fab-item, .fab-menu-header, .stat-value, .stat-label,
+.experiment-table th, .experiment-table td, .taxonomy-item h4 {
+  font-family: 'Consolas', 'Courier New', Courier, monospace !important;
+}
+
 body {
-  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  font-family: 'Consolas', 'Courier New', Courier, monospace !important;
   color: #222;
   background: #faf9f7;
   padding: 0;
+  line-height: 1.85;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -445,8 +453,31 @@ body {
 }
 
 /* ——————————————————————————————————————————————
-   LISTS
+   LISTS (Bebas Buletan Hitam di Semua Halaman)
    —————————————————————————————————————————————— */
+
+ul,
+.content ul,
+.taxonomy-item ul,
+.narasi ul {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 12px !important;
+  margin-top: 8px !important;
+  margin-bottom: 20px !important;
+}
+
+ul li,
+.content ul li,
+.taxonomy-item ul li,
+.narasi ul li {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  line-height: 1.85 !important;
+  margin-bottom: 8px !important;
+  color: #333;
+}
 
 .content ol {
   padding-left: 24px;
@@ -454,8 +485,8 @@ body {
 }
 
 .content ol li {
-  font-size: 1.02rem;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.85;
   margin-bottom: 10px;
   color: #333;
   padding-left: 4px;

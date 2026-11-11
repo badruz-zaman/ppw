@@ -52,13 +52,13 @@
       <p>
         Tujuan pelatihan Skip-Gram adalah memaksimalkan rata-rata log-probabilitas berikut di seluruh korpus teks dengan panjang <em>T</em> kata dan ukuran jendela konteks <em>c</em>:
         <br /><br />
-        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+        <span style="display:block; text-align:center; font-size:0.95rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
           L(&theta;) = (1 / T) &times; &sum;<sub>t=1</sub><sup>T</sup> &sum;<sub>-c &le; j &le; c, j &ne; 0</sub> log P(w<sub>t+j</sub> | w<sub>t</sub>)
         </span>
         <br />
         Probabilitas kondisional dasar dihitung menggunakan fungsi <strong>Softmax</strong>:
         <br /><br />
-        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+        <span style="display:block; text-align:center; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
           P(w<sub>O</sub> | w<sub>I</sub>) = exp(v'&lsquo;<sub>wO</sub><sup>T</sup> &middot; v<sub>wI</sub>) / &sum;<sub>w=1</sub><sup>W</sup> exp(v'&lsquo;<sub>w</sub><sup>T</sup> &middot; v<sub>wI</sub>)
         </span>
         <br />
@@ -101,7 +101,7 @@
         <strong>Tahap 5 &mdash; Document Embedding via Mean Pooling:</strong>
         <br />Karena Word2Vec menghasilkan representasi untuk masing-masing kata, representasi tingkat dokumen dibentuk menggunakan teknik <strong>Mean Pooling (Perataan Vektor)</strong>:
         <br /><br />
-        <span style="display:block; text-align:center; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
+        <span style="display:block; text-align:center; font-size:0.92rem; font-weight:600; padding:10px 0; background:#fdfcf9; border:1px solid #e0ddd8; border-radius:4px;">
           d&#8407;<sub>k</sub> = (1 / N<sub>k</sub>) &times; &sum;<sub>i=1</sub><sup>N<sub>k</sub></sup> v&#8407;(w<sub>i</sub>)
         </span>
         <br />
