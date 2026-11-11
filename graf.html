@@ -3,16 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analisis Struktur Graf (Web Structure Mining) — Badruz Zaman</title>
+  <title>Analisis Graf Berarah &amp; Tidak Berarah — Badruz Zaman</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body, h1, h2, h3, h4, p, a, div, span, table, th, td, button, li, ul {
+      font-family: 'Consolas', 'Courier New', Courier, monospace !important;
+    }
+    body {
+      line-height: 1.85;
+      color: #1e293b;
+      background-color: #fdfdfd;
+    }
+    p {
+      line-height: 1.85;
+      margin-bottom: 16px;
+    }
+    .char-block {
+      margin-bottom: 26px;
+      padding: 18px 22px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .char-block h4 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+      color: #0f172a;
+      font-weight: 700;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .math-list {
+      margin: 10px 0;
+    }
+    .math-item {
+      padding: 3px 0;
+      line-height: 1.85;
+      color: #334155;
+    }
+    .math-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0;
+      line-height: 1.85;
+      font-size: 0.92rem;
+    }
+    .graph-img-card {
+      text-align: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0 28px;
+    }
+    .graph-img-card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+    }
+    .graph-img-caption {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 10px;
+      font-style: italic;
+    }
+    .edges-banner {
+      background: #f1f5f9;
+      border-left: 4px solid #3b82f6;
+      padding: 12px 18px;
+      border-radius: 4px;
+      margin: 16px 0 20px;
+      font-size: 0.92rem;
+      color: #0f172a;
+    }
+  </style>
 </head>
 <body>
 
   <div class="page-header">
-    <div class="kicker">WEB STRUCTURE MINING</div>
-    <h1>Analisis Struktur Graf Berarah &amp; Tidak Berarah</h1>
+    <div class="kicker">STRUKTUR GRAF</div>
+    <h1>Analisis Graf Berarah &amp; Tidak Berarah</h1>
     <p class="subtitle">
-      Pemodelan topologi jaringan 5 vertex dengan NetworkX, mencakup analisis derajat, distribusi derajat, derajat rata-rata, kepadatan, koefisien klasterisasi, lintasan terpendek, diameter, dan matriks ketetanggaan.
+      Pemodelan topologi 5 vertex menggunakan NetworkX beserta analisis 8 karakteristik lengkap untuk graf berarah (directed graph) dan graf tidak berarah (undirected graph).
     </p>
   </div>
 
@@ -26,244 +104,153 @@
   <main class="content content-narrow">
 
     <!-- ══════════════════════════════════════════════════════════════════════════════
-         DOWNLOAD NOTEBOOK
+         BERKAS PRAKTIKUM NOTEBOOK
     ══════════════════════════════════════════════════════════════════════════════ -->
     <div class="narasi" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin: 24px 0 32px;">
       <div>
         <span class="narasi-label">Berkas Praktikum</span>
-        <h3 style="margin: 0; font-size: 1.25rem; color: #111; font-family: 'Newsreader', Georgia, serif; font-weight: 600;">Notebook Jupyter NetworkX</h3>
+        <h3 style="margin: 0; font-size: 1.15rem; color: #111; font-weight: 700;">Notebook Jupyter NetworkX</h3>
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="graf/graf_tidak_berarah.ipynb" class="btn-download" download>
-          Unduh Graf Tidak Berarah (.ipynb) &darr;
-        </a>
-        <a href="graf/graf_berarah.ipynb" class="btn-download btn-download-alt" download>
+        <a href="graf/graf_berarah.ipynb" class="btn-download" download>
           Unduh Graf Berarah (.ipynb) &darr;
         </a>
+        <a href="graf/graf_tidak_berarah.ipynb" class="btn-download btn-download-alt" download>
+          Unduh Graf Tidak Berarah (.ipynb) &darr;
+        </a>
       </div>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════════════════
-         1. PENGANTAR
+         1. GRAF BERARAH (DIRECTED GRAPH)
     ══════════════════════════════════════════════════════════════════════════════ -->
-    <h2>1. Pengantar Web Structure Mining</h2>
+    <h2>1. Graf Berarah (Directed Graph) &mdash; 5 Vertex</h2>
+    
     <p>
-      <strong>Web Structure Mining</strong> adalah cabang dari penambangan web yang berfokus pada analisis struktur keterhubungan (topologi) antar-dokumen atau entitas web. Struktur ini dimodelkan secara matematis sebagai sebuah <strong>Graf $G = (V, E)$</strong>, di mana:
-    </p>
-    <ul>
-      <li><strong>$V$ (Vertices / Nodes):</strong> Kumpulan simpul yang merepresentasikan halaman web, pengguna, atau entitas.</li>
-      <li><strong>$E$ (Edges / Arcs):</strong> Kumpulan sisi yang merepresentasikan tautan (*hyperlink*), relasi sosial, atau interaksi.</li>
-    </ul>
-    <p>
-      Pada eksperimen ini, dibuat dua varian graf dengan 5 simpul ($V = \{A, B, C, D, E\}$) yaitu <strong>Graf Tidak Berarah (Undirected Graph)</strong> dan <strong>Graf Berarah (Directed Graph)</strong>. Masing-masing dianalisis berdasarkan 8 karakteristik fundamental.
+      Pada graf berarah (directed graph / digraf), setiap sisi memiliki arah tertentu dari simpul asal (source) menuju simpul tujuan (target), sehingga relasi (u, v) tidak sama dengan (v, u). Topologi dibentuk dengan jumlah simpul N = 5 (A, B, C, D, E) dan jumlah sisi berarah E = 7.
     </p>
 
-    <!-- ══════════════════════════════════════════════════════════════════════════════
-         2. GRAF TIDAK BERARAH
-    ══════════════════════════════════════════════════════════════════════════════ -->
-    <h2>2. Graf Tidak Berarah (Undirected Graph) — 5 Vertex</h2>
-    <p>
-      Pada graf tidak berarah, sisi menghubungkan dua simpul secara simetris ($(u, v) = (v, u)$). Topologi yang dibentuk memiliki $N = 5$ simpul dan $E = 7$ sisi dengan simpul <strong>E</strong> bertindak sebagai <em>central hub</em>:
-    </p>
-    <p style="text-align: center; font-family: monospace; font-size: 0.95rem; background: #fdfcf9; border: 1px solid #e0ddd8; padding: 10px; border-radius: 6px;">
-      Edges = [(A, B), (A, E), (B, C), (B, E), (C, D), (C, E), (D, E)]
-    </p>
-
-    <div class="taxonomy-item">
-      <h4>1. Degree (Derajat Simpul)</h4>
-      <p>
-        Derajat ($k$) adalah jumlah sisi yang terhubung langsung ke simpul tersebut:
-      </p>
-      <ul>
-        <li>$k_A = 2$ (terhubung ke B, E)</li>
-        <li>$k_B = 3$ (terhubung ke A, C, E)</li>
-        <li>$k_C = 3$ (terhubung ke B, D, E)</li>
-        <li>$k_D = 2$ (terhubung ke C, E)</li>
-        <li>$k_E = 4$ (terhubung ke A, B, C, D)</li>
-      </ul>
-      <p>Total derajat: $\sum k = 2 + 3 + 3 + 2 + 4 = 14 = 2E$ (sesuai Teorema Jabat Tangan / <em>Handshaking Lemma</em>).</p>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>2. Distribusi Derajat $P(k)$</h4>
-      <p>
-        Peluang sebuah simpul yang dipilih secara acak memiliki derajat $k$ ($P(k) = N_k / N$):
-      </p>
-      <ul>
-        <li>$P(k = 2) = 2/5 = 0.40$ (40%) &mdash; Simpul A dan D</li>
-        <li>$P(k = 3) = 2/5 = 0.40$ (40%) &mdash; Simpul B dan C</li>
-        <li>$P(k = 4) = 1/5 = 0.20$ (20%) &mdash; Simpul E</li>
-      </ul>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>3. Average Degree (Rata-rata Derajat)</h4>
-      <p>
-        Rata-rata derajat seluruh simpul dalam jaringan:
-      </p>
-      <p style="text-align: center; font-weight: 600; font-family: 'Inter', sans-serif;">
-        &lang;k&rang; = &sum; k<sub>i</sub> / N = 2E / N = 14 / 5 = <strong>2.80</strong>
-      </p>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>4. Density (Kepadatan Graf)</h4>
-      <p>
-        Rasio antara jumlah sisi aktual ($E$) dengan jumlah sisi maksimum yang mungkin ($E_{\text{maks}} = N(N-1)/2 = 10$):
-      </p>
-      <p style="text-align: center; font-weight: 600; font-family: 'Inter', sans-serif;">
-        Density = 2E / [N(N &minus; 1)] = (2 &times; 7) / (5 &times; 4) = 14 / 20 = <strong>0.70 (70%)</strong>
-      </p>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>5. Koefisien Klasterisasi (Clustering Coefficient)</h4>
-      <p>
-        Mengukur seberapa erat tetangga-tetangga suatu simpul saling terhubung satu sama lain ($C_i = 2 e_i / [k_i(k_i - 1)]$):
-      </p>
-      <ul>
-        <li>Simpul A : $C_A = 1.0000$ (tetangga B dan E saling terhubung)</li>
-        <li>Simpul B : $C_B = 0.6667$</li>
-        <li>Simpul C : $C_C = 0.6667$</li>
-        <li>Simpul D : $C_D = 1.0000$ (tetangga C dan E saling terhubung)</li>
-        <li>Simpul E : $C_E = 0.5000$</li>
-      </ul>
-      <p><strong>Rata-rata Koefisien Klasterisasi:</strong> &lang;C&rang; = (1.0 + 0.6667 + 0.6667 + 1.0 + 0.5) / 5 = <strong>0.7667</strong>.</p>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>6. Jalur Terpendek (Shortest Path)</h4>
-      <p>
-        Rute lintasan dengan jumlah langkah paling minimal antar-simpul. Karena simpul E terhubung ke semua simpul, semua pasangan simpul dapat dijangkau dalam maksimal 2 langkah:
-      </p>
-      <ul>
-        <li>Jalur A &harr; B : A &minus; B (Jarak = 1)</li>
-        <li>Jalur A &harr; C : A &minus; B &minus; C atau A &minus; E &minus; C (Jarak = 2)</li>
-        <li>Jalur A &harr; D : A &minus; E &minus; D (Jarak = 2)</li>
-        <li>Jalur B &harr; D : B &minus; C &minus; D atau B &minus; E &minus; D (Jarak = 2)</li>
-      </ul>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>7. Diameter Jaringan &amp; Jarak Rata-rata</h4>
-      <p>
-        <strong>Diameter ($d_{\text{maks}}$):</strong> Jarak terpanjang dari lintasan terpendek = <strong>2</strong>.<br>
-        <strong>Jarak Rata-rata (&lang;d&rang;):</strong> Rata-rata jarak terpendek untuk seluruh 10 pasangan simpul = <strong>1.3000</strong>.
-      </p>
-    </div>
-
-    <div class="taxonomy-item">
-      <h4>8. Matriks Adjacency (Ketetanggaan)</h4>
-      <p>
-        Matriks biner simetris $A$ di mana $A_{ij} = 1$ jika ada sisi dan $0$ jika tidak:
-      </p>
-      <div class="experiment-table-wrap">
-        <table class="experiment-table" style="text-align: center;">
-          <thead>
-            <tr><th>Simpul</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
-          </thead>
-          <tbody>
-            <tr><th>A</th><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
-            <tr><th>B</th><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
-            <tr><th>C</th><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
-            <tr><th>D</th><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
-            <tr><th>E</th><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════════════════════════════════
-         3. GRAF BERARAH
-    ══════════════════════════════════════════════════════════════════════════════ -->
-    <h2>3. Graf Berarah (Directed Graph) — 5 Vertex</h2>
-    <p>
-      Pada graf berarah (Digraf), sisi memiliki arah panah ($(u, v) \neq (v, u)$). Topologi dibentuk dengan $N = 5$ simpul dan $E = 7$ busur berarah yang terhubung kuat (*strongly connected*):
-    </p>
-    <p style="text-align: center; font-family: monospace; font-size: 0.95rem; background: #fdfcf9; border: 1px solid #e0ddd8; padding: 10px; border-radius: 6px;">
+    <div class="edges-banner">
+      <strong>Edges Berarah (Source &rarr; Target):</strong><br>
       Edges = [(A, B), (B, C), (C, D), (D, B), (D, E), (E, C), (E, A)]
-    </p>
+    </div>
 
-    <div class="taxonomy-item">
-      <h4>1. In-Degree, Out-Degree, &amp; Total Degree</h4>
+    <!-- Visualisasi Gambar Graf Berarah -->
+    <div class="graph-img-card">
+      <img src="graf/graf_berarah.png" alt="Visualisasi Graf Berarah (5 Vertex)" />
+      <div class="graph-img-caption">Gambar 1: Visualisasi Graf Berarah 5 Vertex hasil running graf_berarah.ipynb</div>
+    </div>
+
+    <!-- 8 Karakteristik Graf Berarah -->
+    <div class="char-block">
+      <h4>1. Degree (In-Degree, Out-Degree, &amp; Total Degree)</h4>
       <p>
-        Derajat masuk ($k_{\text{in}}$), derajat keluar ($k_{\text{out}}$), dan derajat total ($k_{\text{tot}} = k_{\text{in}} + k_{\text{out}}$):
+        Derajat masuk (In-Degree) adalah jumlah sisi berarah yang masuk ke simpul, derajat keluar (Out-Degree) adalah jumlah sisi berarah yang keluar dari simpul, dan derajat total adalah penjumlahan keduanya:
       </p>
-      <ul>
-        <li>Simpul A : In = 1 (dari E), Out = 1 (ke B) &rarr; Total = 2</li>
-        <li>Simpul B : In = 2 (dari A, D), Out = 1 (ke C) &rarr; Total = 3</li>
-        <li>Simpul C : In = 2 (dari B, E), Out = 1 (ke D) &rarr; Total = 3</li>
-        <li>Simpul D : In = 1 (dari C), Out = 2 (ke B, E) &rarr; Total = 3</li>
-        <li>Simpul E : In = 1 (dari D), Out = 2 (ke C, A) &rarr; Total = 3</li>
-      </ul>
-      <p>Total: $\sum k_{\text{in}} = 7 = E$, $\sum k_{\text{out}} = 7 = E$, $\sum k_{\text{tot}} = 14 = 2E$.</p>
+      <div class="math-list">
+        <div class="math-item">Simpul A : In = 1 (dari E), Out = 1 (ke B) &rarr; Total = 2</div>
+        <div class="math-item">Simpul B : In = 2 (dari A, D), Out = 1 (ke C) &rarr; Total = 3</div>
+        <div class="math-item">Simpul C : In = 2 (dari B, E), Out = 1 (ke D) &rarr; Total = 3</div>
+        <div class="math-item">Simpul D : In = 1 (dari C), Out = 2 (ke B, E) &rarr; Total = 3</div>
+        <div class="math-item">Simpul E : In = 1 (dari D), Out = 2 (ke C, A) &rarr; Total = 3</div>
+      </div>
+      <div class="math-box">
+        Total In-Degree  : &Sigma; k_in  = 1 + 2 + 2 + 1 + 1 = 7 = E<br>
+        Total Out-Degree : &Sigma; k_out = 1 + 1 + 1 + 2 + 2 = 7 = E<br>
+        Total Degree     : &Sigma; k_tot = 2 + 3 + 3 + 3 + 3 = 14 = 2E
+      </div>
     </div>
 
-    <div class="taxonomy-item">
-      <h4>2. Distribusi Derajat $P(k)$</h4>
-      <ul>
-        <li><strong>In-Degree:</strong> $P_{\text{in}}(k = 1) = 3/5 = 0.60$ (A, D, E); $P_{\text{in}}(k = 2) = 2/5 = 0.40$ (B, C)</li>
-        <li><strong>Out-Degree:</strong> $P_{\text{out}}(k = 1) = 3/5 = 0.60$ (A, B, C); $P_{\text{out}}(k = 2) = 2/5 = 0.40$ (D, E)</li>
-      </ul>
+    <div class="char-block">
+      <h4>2. Distribusi Derajat P(k)</h4>
+      <p>
+        Peluang sebuah simpul yang dipilih secara acak memiliki derajat k tertentu (P(k) = N_k / N):
+      </p>
+      <div class="math-list">
+        <div class="math-item"><strong>Distribusi In-Degree:</strong></div>
+        <div class="math-item">P_in(k = 1) = 3/5 = 0.60 (60%) &mdash; Simpul A, D, E</div>
+        <div class="math-item">P_in(k = 2) = 2/5 = 0.40 (40%) &mdash; Simpul B, C</div>
+        <div class="math-item" style="margin-top: 10px;"><strong>Distribusi Out-Degree:</strong></div>
+        <div class="math-item">P_out(k = 1) = 3/5 = 0.60 (60%) &mdash; Simpul A, B, C</div>
+        <div class="math-item">P_out(k = 2) = 2/5 = 0.40 (40%) &mdash; Simpul D, E</div>
+        <div class="math-item" style="margin-top: 10px;"><strong>Distribusi Total Degree:</strong></div>
+        <div class="math-item">P_tot(k = 2) = 1/5 = 0.20 (20%) &mdash; Simpul A</div>
+        <div class="math-item">P_tot(k = 3) = 4/5 = 0.80 (80%) &mdash; Simpul B, C, D, E</div>
+      </div>
     </div>
 
-    <div class="taxonomy-item">
+    <div class="char-block">
       <h4>3. Average Degree (Rata-rata Derajat)</h4>
-      <ul>
-        <li>Average In-Degree &lang;k<sub>in</sub>&rang; = E / N = 7 / 5 = <strong>1.40</strong></li>
-        <li>Average Out-Degree &lang;k<sub>out</sub>&rang; = E / N = 7 / 5 = <strong>1.40</strong></li>
-        <li>Average Total Degree &lang;k&rang; = 2E / N = 14 / 5 = <strong>2.80</strong></li>
-      </ul>
+      <p>
+        Nilai rata-rata derajat untuk seluruh simpul dalam jaringan berarah:
+      </p>
+      <div class="math-box">
+        Rata-rata In-Degree  : &lang;k_in&rang;  = E / N = 7 / 5 = 1.4000<br>
+        Rata-rata Out-Degree : &lang;k_out&rang; = E / N = 7 / 5 = 1.4000<br>
+        Rata-rata Total      : &lang;k_tot&rang; = 2E / N = 14 / 5 = 2.8000
+      </div>
     </div>
 
-    <div class="taxonomy-item">
+    <div class="char-block">
       <h4>4. Density (Kepadatan Graf Berarah)</h4>
       <p>
-        Pada graf berarah, jumlah sisi maksimum adalah $N(N &minus; 1) = 20$:
+        Rasio antara jumlah sisi aktual (E) dengan jumlah kemungkinan sisi maksimum pada graf berarah tanpa perulangan mandiri:
       </p>
-      <p style="text-align: center; font-weight: 600; font-family: 'Inter', sans-serif;">
-        Density = E / [N(N &minus; 1)] = 7 / (5 &times; 4) = 7 / 20 = <strong>0.3500 (35%)</strong>
-      </p>
+      <div class="math-box">
+        Jumlah sisi maksimum : E_max = N &times; (N &minus; 1) = 5 &times; 4 = 20<br>
+        Density = E / [N &times; (N &minus; 1)] = 7 / 20 = 0.3500 (35.00%)
+      </div>
     </div>
 
-    <div class="taxonomy-item">
-      <h4>5. Koefisien Klasterisasi Berarah</h4>
+    <div class="char-block">
+      <h4>5. Koefisien Klasterisasi Berarah (Clustering Coefficient)</h4>
       <p>
-        Dihitung menggunakan algoritma Fagiolo untuk graf berarah (memperhitungkan siklus segitiga berarah):<br>
-        <strong>Rata-rata Koefisien Klasterisasi &lang;C&rang; = 0.2667</strong>.
+        Dihitung menggunakan algoritma Fagiolo untuk graf berarah (memperhitungkan segitiga bertaut berarah):
       </p>
+      <div class="math-list">
+        <div class="math-item">Simpul A : C(A) = 0.0000</div>
+        <div class="math-item">Simpul B : C(B) = 0.3333</div>
+        <div class="math-item">Simpul C : C(C) = 0.3333</div>
+        <div class="math-item">Simpul D : C(D) = 0.3333</div>
+        <div class="math-item">Simpul E : C(E) = 0.3333</div>
+      </div>
+      <div class="math-box">
+        Rata-rata Koefisien Klasterisasi : &lang;C&rang; = (0.0000 + 0.3333 + 0.3333 + 0.3333 + 0.3333) / 5 = 0.2667
+      </div>
     </div>
 
-    <div class="taxonomy-item">
+    <div class="char-block">
       <h4>6. Jalur Terpendek Berarah (Shortest Path)</h4>
       <p>
-        Mengikuti arah anak panah secara ketat:
+        Lintasan terpendek antar-simpul yang secara ketat mematuhi arah anak panah:
       </p>
-      <ul>
-        <li>Jalur A &rarr; B : A &rarr; B (Jarak = 1)</li>
-        <li>Jalur A &rarr; D : A &rarr; B &rarr; C &rarr; D (Jarak = 3)</li>
-        <li>Jalur B &rarr; A : B &rarr; C &rarr; D &rarr; E &rarr; A (Jarak = 4)</li>
-        <li>Jalur D &rarr; B : D &rarr; B (Jarak = 1, siklus internal)</li>
-        <li>Jalur E &rarr; C : E &rarr; C (Jarak = 1)</li>
-      </ul>
+      <div class="math-list">
+        <div class="math-item">Dari Simpul A : ke B = A &rarr; B (1) | ke C = A &rarr; B &rarr; C (2) | ke D = A &rarr; B &rarr; C &rarr; D (3) | ke E = A &rarr; B &rarr; C &rarr; D &rarr; E (4)</div>
+        <div class="math-item">Dari Simpul B : ke C = B &rarr; C (1) | ke D = B &rarr; C &rarr; D (2) | ke E = B &rarr; C &rarr; D &rarr; E (3) | ke A = B &rarr; C &rarr; D &rarr; E &rarr; A (4)</div>
+        <div class="math-item">Dari Simpul C : ke D = C &rarr; D (1) | ke B = C &rarr; D &rarr; B (2) | ke E = C &rarr; D &rarr; E (2) | ke A = C &rarr; D &rarr; E &rarr; A (3)</div>
+        <div class="math-item">Dari Simpul D : ke B = D &rarr; B (1) | ke E = D &rarr; E (1) | ke A = D &rarr; E &rarr; A (2) | ke C = D &rarr; E &rarr; C (2)</div>
+        <div class="math-item">Dari Simpul E : ke A = E &rarr; A (1) | ke C = E &rarr; C (1) | ke B = E &rarr; A &rarr; B (2) | ke D = E &rarr; C &rarr; D (2)</div>
+      </div>
     </div>
 
-    <div class="taxonomy-item">
+    <div class="char-block">
       <h4>7. Diameter Jaringan &amp; Jarak Rata-rata</h4>
       <p>
-        Karena graf ini terhubung kuat (*strongly connected*):<br>
-        <strong>Diameter ($d_{\text{maks}}$):</strong> Jarak terpanjang dari lintasan terpendek berarah = <strong>4</strong> (yaitu dari B ke A melalui $B \rightarrow C \rightarrow D \rightarrow E \rightarrow A$).<br>
-        <strong>Jarak Rata-rata (&lang;d&rang;):</strong> Rata-rata panjang lintasan terpendek untuk seluruh 20 pasangan simpul = <strong>1.8500</strong>.
+        Topologi graf ini terhubung kuat (strongly connected) karena setiap simpul memiliki rute berarah ke setiap simpul lainnya:
       </p>
+      <div class="math-box">
+        Diameter (d_max)     : Jarak terpanjang dari lintasan terpendek = 4 (misalnya A ke E dan B ke A)<br>
+        Jarak Rata-rata (&lang;d&rang;) : Rata-rata jarak terpendek untuk 20 pasangan berarah = 37 / 20 = 1.8500
+      </div>
     </div>
 
-    <div class="taxonomy-item">
-      <h4>8. Matriks Adjacency Berarah</h4>
+    <div class="char-block">
+      <h4>8. Matriks Adjacency (Ketetanggaan Berarah)</h4>
       <p>
-        Baris menunjukkan simpul asal (*source*), dan kolom menunjukkan simpul tujuan (*target*):
+        Matriks biner di mana baris menunjukkan simpul asal (source) dan kolom menunjukkan simpul tujuan (target). Nilai bernilai 1 jika ada sisi berarah dan 0 jika tidak ada:
       </p>
       <div class="experiment-table-wrap">
-        <table class="experiment-table" style="text-align: center;">
+        <table class="experiment-table" style="text-align: center; width: 100%;">
           <thead>
             <tr><th>Asal \ Tujuan</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
           </thead>
@@ -279,25 +266,154 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════════════════
+         2. GRAF TIDAK BERARAH (UNDIRECTED GRAPH)
+    ══════════════════════════════════════════════════════════════════════════════ -->
+    <h2 style="margin-top: 52px;">2. Graf Tidak Berarah (Undirected Graph) &mdash; 5 Vertex</h2>
+    
+    <p>
+      Pada graf tidak berarah (undirected graph), sisi menghubungkan dua simpul secara simetris dua arah (u, v) = (v, u). Topologi memiliki N = 5 simpul (A, B, C, D, E) dan E = 7 sisi dengan simpul E bertindak sebagai central hub penghubung.
+    </p>
+
+    <div class="edges-banner">
+      <strong>Edges Tidak Berarah:</strong><br>
+      Edges = [(A, B), (A, E), (B, C), (B, E), (C, D), (C, E), (D, E)]
+    </div>
+
+    <!-- Visualisasi Gambar Graf Tidak Berarah -->
+    <div class="graph-img-card">
+      <img src="graf/graf_tidak_berarah.png" alt="Visualisasi Graf Tidak Berarah (5 Vertex)" />
+      <div class="graph-img-caption">Gambar 2: Visualisasi Graf Tidak Berarah 5 Vertex hasil running graf_tidak_berarah.ipynb</div>
+    </div>
+
+    <!-- 8 Karakteristik Graf Tidak Berarah -->
+    <div class="char-block">
+      <h4>1. Degree (Derajat Simpul)</h4>
+      <p>
+        Derajat simpul k adalah jumlah sisi yang terhubung langsung ke simpul tersebut:
+      </p>
+      <div class="math-list">
+        <div class="math-item">Simpul A : k(A) = 2 (terhubung ke B, E)</div>
+        <div class="math-item">Simpul B : k(B) = 3 (terhubung ke A, C, E)</div>
+        <div class="math-item">Simpul C : k(C) = 3 (terhubung ke B, D, E)</div>
+        <div class="math-item">Simpul D : k(D) = 2 (terhubung ke C, E)</div>
+        <div class="math-item">Simpul E : k(E) = 4 (terhubung ke A, B, C, D)</div>
+      </div>
+      <div class="math-box">
+        Total Derajat: &Sigma; k = 2 + 3 + 3 + 2 + 4 = 14 = 2E (Sesuai Teorema Jabat Tangan / Handshaking Lemma)
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>2. Distribusi Derajat P(k)</h4>
+      <p>
+        Peluang sebuah simpul yang dipilih secara acak memiliki derajat k tertentu (P(k) = N_k / N):
+      </p>
+      <div class="math-list">
+        <div class="math-item">P(k = 2) = 2/5 = 0.40 (40%) &mdash; Simpul A dan D</div>
+        <div class="math-item">P(k = 3) = 2/5 = 0.40 (40%) &mdash; Simpul B dan C</div>
+        <div class="math-item">P(k = 4) = 1/5 = 0.20 (20%) &mdash; Simpul E</div>
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>3. Average Degree (Rata-rata Derajat)</h4>
+      <p>
+        Nilai rata-rata derajat seluruh simpul dalam jaringan tidak berarah:
+      </p>
+      <div class="math-box">
+        Rata-rata Derajat : &lang;k&rang; = &Sigma; k / N = 2E / N = 14 / 5 = 2.8000
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>4. Density (Kepadatan Graf)</h4>
+      <p>
+        Rasio antara jumlah sisi aktual (E) dengan kemungkinan sisi maksimum pada graf tidak berarah:
+      </p>
+      <div class="math-box">
+        Jumlah sisi maksimum : E_max = N &times; (N &minus; 1) / 2 = (5 &times; 4) / 2 = 10<br>
+        Density = 2E / [N &times; (N &minus; 1)] = 14 / 20 = 0.7000 (70.00%)
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>5. Koefisien Klasterisasi (Clustering Coefficient)</h4>
+      <p>
+        Mengukur seberapa erat tetangga-tetangga suatu simpul saling terhubung satu sama lain dengan rumus C_i = 2 &times; e_i / [k_i &times; (k_i &minus; 1)]:
+      </p>
+      <div class="math-list">
+        <div class="math-item">Simpul A : C(A) = 2 &times; 1 / (2 &times; 1) = 1.0000 (tetangga B dan E saling terhubung)</div>
+        <div class="math-item">Simpul B : C(B) = 2 &times; 2 / (3 &times; 2) = 0.6667 (dari 3 kemungkinan relasi, ada 2)</div>
+        <div class="math-item">Simpul C : C(C) = 2 &times; 2 / (3 &times; 2) = 0.6667 (dari 3 kemungkinan relasi, ada 2)</div>
+        <div class="math-item">Simpul D : C(D) = 2 &times; 1 / (2 &times; 1) = 1.0000 (tetangga C dan E saling terhubung)</div>
+        <div class="math-item">Simpul E : C(E) = 2 &times; 3 / (4 &times; 3) = 0.5000 (dari 6 kemungkinan relasi, ada 3)</div>
+      </div>
+      <div class="math-box">
+        Rata-rata Koefisien Klasterisasi : &lang;C&rang; = (1.0000 + 0.6667 + 0.6667 + 1.0000 + 0.5000) / 5 = 0.7667
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>6. Jalur Terpendek (Shortest Path)</h4>
+      <p>
+        Jarak lintasan paling minimal antar seluruh 10 pasangan simpul tidak berarah:
+      </p>
+      <div class="math-list">
+        <div class="math-item">Jalur A &mdash; B : A &minus; B (Jarak = 1)</div>
+        <div class="math-item">Jalur A &mdash; C : A &minus; B &minus; C atau A &minus; E &minus; C (Jarak = 2)</div>
+        <div class="math-item">Jalur A &mdash; D : A &minus; E &minus; D (Jarak = 2)</div>
+        <div class="math-item">Jalur A &mdash; E : A &minus; E (Jarak = 1)</div>
+        <div class="math-item">Jalur B &mdash; C : B &minus; C (Jarak = 1)</div>
+        <div class="math-item">Jalur B &mdash; D : B &minus; C &minus; D atau B &minus; E &minus; D (Jarak = 2)</div>
+        <div class="math-item">Jalur B &mdash; E : B &minus; E (Jarak = 1)</div>
+        <div class="math-item">Jalur C &mdash; D : C &minus; D (Jarak = 1)</div>
+        <div class="math-item">Jalur C &mdash; E : C &minus; E (Jarak = 1)</div>
+        <div class="math-item">Jalur D &mdash; E : D &minus; E (Jarak = 1)</div>
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>7. Diameter Jaringan &amp; Jarak Rata-rata</h4>
+      <p>
+        Karakteristik jarak global pada graf tidak berarah:
+      </p>
+      <div class="math-box">
+        Diameter (d_max)     : Jarak terpanjang dari lintasan terpendek = 2 (semua simpul dapat dicapai maks 2 langkah)<br>
+        Jarak Rata-rata (&lang;d&rang;) : Rata-rata jarak terpendek untuk 10 pasangan simpul = 13 / 10 = 1.3000
+      </div>
+    </div>
+
+    <div class="char-block">
+      <h4>8. Matriks Adjacency (Ketetanggaan)</h4>
+      <p>
+        Matriks biner simetris A di mana A[i][j] = 1 jika terdapat sisi antara simpul i dan j, dan 0 jika tidak ada sisi:
+      </p>
+      <div class="experiment-table-wrap">
+        <table class="experiment-table" style="text-align: center; width: 100%;">
+          <thead>
+            <tr><th>Simpul</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>A</th><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><th>B</th><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+            <tr><th>C</th><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+            <tr><th>D</th><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+            <tr><th>E</th><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════
          NAVIGASI BAWAH
     ══════════════════════════════════════════════════════════════════════════════ -->
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0ddd8;">
-      <a href="skipgram.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #141425; text-decoration: none;">
-        &larr; Kembali ke: Word2Vec Skip-Gram
+      <a href="klasifikasi_berita.html" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; font-weight: 600; color: #141425; text-decoration: none;">
+        &larr; Kembali ke: Klasifikasi Berita
       </a>
-      <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #64748b; text-decoration: none;">
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; font-weight: 600; color: #64748b; text-decoration: none;">
         Beranda Pengantar Web Mining &rarr;
       </a>
-    </div>
-
-    <div class="references">
-      <h3>Daftar Pustaka</h3>
-      <ol>
-        <li>Materi Perkuliahan: <em>Web Structure Mining — Mendeskripsikan Graf: Terminologi dan Metrik</em>.</li>
-        <li>Hagberg, A., Swart, P., &amp; S Chult, D. (2008). <em>Exploring network structure, dynamics, and function using NetworkX</em>. Los Alamos National Lab (LANL).</li>
-        <li>Freeman, L. C. (1978). Centrality in social networks conceptual clarification. <em>Social Networks</em>, 1(3), 215&ndash;239.</li>
-        <li>Fagiolo, G. (2007). Clustering in complex directed networks. <em>Physical Review E</em>, 76(2), 026107.</li>
-      </ol>
     </div>
 
   </main>
@@ -331,4 +447,3 @@
 
 </body>
 </html>
-
