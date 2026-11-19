@@ -314,8 +314,8 @@ def _render_methodology_tab(result: dict, alpha: float) -> None:
 2. **HTTP Request & Penanganan Redirect:** Sistem menghubungi website target via HTTP GET menggunakan User-Agent browser modern dan mencatat domain kanonikal bila terjadi pengalihan (*redirect*).
 3. **Ekstraksi Hyperlink (`<a href>`):** Seluruh tag tautan di dalam dokumen HTML diekstrak dengan `BeautifulSoup`, dikonversi menjadi URL absolut (`urljoin`), dan dibersihkan dari fragment (`#`), tautan non-HTTP (`mailto:`, `tel:`, `javascript:`), serta file statis (gambar, PDF, video).
 4. **Normalisasi Node Website:** Target tautan dipetakan menjadi nama simpul graf (berdasarkan *Host / Subdomain* atau *Root Domain*), sekaligus menyaring tautan noise (tombol share media sosial, tracker analitik, CDN) jika opsi filter aktif.
-5. **Crawling Berulang (BFS Multi-Depth):** Sistem mengunjungi website-website tujuan yang ditemukan secara paralel hingga batas kedalaman ($depth \ge 2$). Dari kunjungan berulang ini, tautan balik (*backlink*) dan tautan silang antar-website berhasil terekstrak sehingga graf keterhubungan benar-benar terjalin.
-6. **Pembentukan Graf Berarah (DiGraph):** Jika website $A$ memiliki tautan menuju website $B$ ($A \ne B$), maka ditambahkan sebuah sisi berarah $A \to B$.
+5. **Crawling Berulang (BFS Multi-Depth):** Sistem mengunjungi website-website tujuan yang ditemukan secara paralel hingga batas kedalaman (**Depth ≥ 2**). Dari kunjungan berulang ini, tautan balik (*backlink*) dan tautan silang antar-website berhasil terekstrak sehingga graf keterhubungan benar-benar terjalin.
+6. **Pembentukan Graf Berarah (DiGraph):** Jika website **A** memiliki tautan menuju website **B** (**A ≠ B**), maka ditambahkan sebuah sisi berarah **A → B**.
 7. **Perhitungan PageRank:** Algoritma PageRank (*Power Iteration*) dijalankan pada graf berarah hingga konvergen untuk menghitung distribusi bobot otoritas seluruh simpul.
 """
         )
@@ -330,13 +330,14 @@ def _render_methodology_tab(result: dict, alpha: float) -> None:
 
         st.markdown(
             "**Keterangan Variabel & Komponen Rumus:**\n\n"
-            f"- **$PR(i)$** : Skor PageRank (bobot otoritas) dari website $i$.\n"
-            f"- **$d$** : *Damping Factor* ($d = {alpha:.2f}$), probabilitas penelusur terus mengikuti hyperlink web.\n"
+            f"- **$PR(i)$** : Skor PageRank (bobot otoritas/kepentingan) dari website $i$.\n"
+            f"- **$d$** : *Damping Factor* ($d = {alpha:.2f}$), probabilitas penelusur terus mengikuti tautan di halaman web.\n"
+            f"- **$1 - d$** : Probabilitas teleportasi acak ($1 - d = {1 - alpha:.2f}$), peluang melompat acak ke sembarang website lain.\n"
             f"- **$N$** : Jumlah total website unik yang ditemukan dalam graf ($N = {total_nodes}$).\n"
-            r"- **$\frac{1 - d}{N}$** : Bobot dasar minimum (*random teleportation*) yang dibagikan merata ke seluruh simpul agar surfer tidak terjebak di halaman buntu (*dead end*)." + "\n"
+            r"- **$\frac{1 - d}{N}$** : Bobot dasar minimum (*uniform teleportation*) yang dibagikan merata ke seluruh simpul agar surfer tidak terjebak di halaman buntu (*dead end*)." + "\n"
             f"- **$E$** : Himpunan seluruh relasi tautan berarah antar-website ($|E| = {total_edges}$).\n"
             r"- **$D_{\text{out}}(j)$** : *Out-degree* (jumlah seluruh tautan keluar) dari website $j$." + "\n"
-            r"- **$\sum_{(j,i) \in E} \frac{PR(j)}{D_{\text{out}}(j)}$** : Akumulasi transfer bobot dari setiap website $j$ yang mereferensikan atau memiliki tautan masuk (*in-link*) menuju website $i$."
+            r"- **$\sum_{(j,i) \in E} \frac{PR(j)}{D_{\text{out}}(j)}$** : Akumulasi transfer bobot dari setiap website $j$ yang memberikan tautan masuk (*in-link*) menuju website $i$."
         )
 
     trace = result.get("power_trace", [])
