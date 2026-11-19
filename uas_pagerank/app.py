@@ -359,7 +359,7 @@ def main() -> None:
         max_pages = st.slider(
             "Max Pages",
             min_value=8,
-            max_value=50,
+            max_value=150,
             value=25,
             step=5,
             help="Jumlah maksimal website yang dikunjungi crawler untuk mengekstrak tautan keluar.",
