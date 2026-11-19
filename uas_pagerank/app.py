@@ -195,36 +195,6 @@ def _apply_custom_css() -> None:
                 color: #ffffff !important;
             }
 
-            /* ── Tombol Sekunder / Preset (1 Baris Rapi, Tanpa Wrap) ── */
-            .stButton > button[kind="secondary"] {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                background-color: #ffffff !important;
-                color: #222222 !important;
-                border: 1.5px solid #d5d0c8 !important;
-                border-radius: 6px !important;
-                font-size: 0.82rem !important;
-                font-weight: 600 !important;
-                padding: 0.45rem 0.35rem !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                min-height: 38px !important;
-                height: 38px !important;
-                line-height: 1.1 !important;
-                transition: all 0.15s ease !important;
-            }
-            .stButton > button[kind="secondary"] * {
-                white-space: nowrap !important;
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                font-size: 0.82rem !important;
-                line-height: 1.1 !important;
-            }
-            .stButton > button[kind="secondary"]:hover {
-                border-color: #141425 !important;
-                color: #141425 !important;
-                background-color: #f4f1eb !important;
-            }
-
             /* ── Tombol Download CSV (st.download_button) ── */
             .stDownloadButton,
             .stDownloadButton > button,
