@@ -1,16 +1,8 @@
-"""Aplikasi Web Crawling & Analisis PageRank Website (Streamlit).
-
-Sistem dinamis untuk mengekstrak hyperlink antar-website secara iteratif,
-membangun graf berarah (DiGraph), menghitung skor PageRank, dan menentukan
-10 website paling berpengaruh dari sembarang URL publik yang dimasukkan.
-"""
-
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-# Pastikan folder modul lokal selalu terbaca di sys.path
 _MODULE_DIR = Path(__file__).resolve().parent
 if str(_MODULE_DIR) not in sys.path:
     sys.path.insert(0, str(_MODULE_DIR))
@@ -524,7 +516,7 @@ def main() -> None:
     edges_df = result["edges_df"]
     top1_row = top10_df.iloc[0]
 
-    # Kartu Hasil Pemenang (#1 PageRank) Berkonsep PSD App
+    # Kartu Pagerank (Rank 1)
     st.markdown(
         f"""
         <div class="card-result">
