@@ -371,14 +371,7 @@ def main() -> None:
             value=2,
             help="Kedalaman penelusuran tautan (1 atau 2). Depth = 2 sangat disarankan agar terbentuk tautan balik dan hubungan silang antar-website.",
         )
-        alpha = st.slider(
-            "Damping Factor",
-            min_value=0.50,
-            max_value=0.95,
-            value=0.85,
-            step=0.05,
-            help="Probabilitas peselancar acak mengikuti tautan (standar literatur = 0.85).",
-        )
+        alpha = 0.85
 
     # Hero / Header Bersih (Senada dengan PSD App)
     st.markdown(
