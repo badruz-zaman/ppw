@@ -147,6 +147,8 @@ def _apply_custom_css() -> None:
                 background: #ffffff !important;
                 color: #111111 !important;
                 -webkit-text-fill-color: #111111 !important;
+                caret-color: #111111 !important;
+                cursor: text !important;
                 font-family: 'Consolas', 'Courier New', monospace !important;
                 font-size: 0.95rem !important;
                 font-weight: 600 !important;
@@ -395,6 +397,7 @@ def main() -> None:
     with input_col:
         target_url = st.text_input(
             "Masukkan Link Web:",
+            value="https://www.trunojoyo.ac.id",
             placeholder="https://www.trunojoyo.ac.id",
         )
     with btn_col:
@@ -447,12 +450,12 @@ def main() -> None:
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown(
-            f"""<div class="metric-pill">Total Simpul (Node)<div class="metric-pill-val">{DG.number_of_nodes()}</div></div>""",
+            f"""<div class="metric-pill">Simpul (Node)<div class="metric-pill-val">{DG.number_of_nodes()}</div></div>""",
             unsafe_allow_html=True,
         )
     with m2:
         st.markdown(
-            f"""<div class="metric-pill">Total Hubungan (Edge)<div class="metric-pill-val">{DG.number_of_edges()}</div></div>""",
+            f"""<div class="metric-pill">Sisi (Edge)<div class="metric-pill-val">{DG.number_of_edges()}</div></div>""",
             unsafe_allow_html=True,
         )
     with m3:
@@ -484,15 +487,18 @@ def main() -> None:
 
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
     st.subheader("Visualisasi Graf Berarah Hubungan Antar-Website")
-    st.caption("Eksplorasi graf interaktif ala CitationGraph: simpul dapat digeser (drag), di-zoom, di-hover untuk melihat detail skor, dan diklik untuk menyorot tautan terhubung.")
 
-    max_vis = min(40, max(5, DG.number_of_nodes()))
-    top_n_vis = st.slider(
-        "Jumlah Simpul Teratas pada Visualisasi Graf:",
-        min_value=min(5, max_vis),
-        max_value=max_vis,
-        value=min(18, max_vis),
-    )
+    total_nodes = DG.number_of_nodes()
+    if total_nodes <= 5:
+        top_n_vis = total_nodes
+    else:
+        top_n_vis = st.slider(
+            "Jumlah Simpul pada Visualisasi Graf:",
+            min_value=5,
+            max_value=total_nodes,
+            value=total_nodes,
+            help=f"Geser untuk menyesuaikan jumlah simpul yang ditampilkan (maksimal {total_nodes} simpul).",
+        )
 
     vis_html = generate_citationgraph_vis_html(
         DG,
