@@ -367,7 +367,7 @@ def main() -> None:
         max_depth = st.slider(
             "Depth",
             min_value=1,
-            max_value=2,
+            max_value=3,
             value=2,
             help="Kedalaman penelusuran tautan (1 atau 2). Depth = 2 sangat disarankan agar terbentuk tautan balik dan hubungan silang antar-website.",
         )
