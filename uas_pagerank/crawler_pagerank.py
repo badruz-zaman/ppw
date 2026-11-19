@@ -736,37 +736,6 @@ def generate_citationgraph_vis_html(
     #graph-wrapper {{ width: 100%; height: {height}px; background-color: #faf9f7; border: 1.5px solid #d5d0c8; border-radius: 8px; position: relative; }}
     #mynetwork {{ width: 100%; height: 100%; }}
 
-    .controls {{
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 100;
-      display: flex;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 6px 10px;
-      border: 1px solid #d5d0c8;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }}
-    .ctrl-btn {{
-      background: #ffffff;
-      border: 1px solid #c8c3ba;
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #141425;
-      cursor: pointer;
-      font-family: 'Consolas', 'Courier New', monospace !important;
-      transition: all 0.15s ease;
-    }}
-    .ctrl-btn:hover {{
-      background: #141425;
-      color: #ffffff;
-      border-color: #141425;
-    }}
-
     .graph-legend {{
       position: absolute;
       bottom: 12px;
@@ -807,13 +776,6 @@ def generate_citationgraph_vis_html(
 </head>
 <body>
   <div id="graph-wrapper">
-    <div class="controls">
-      <button class="ctrl-btn" onclick="network.fit({{animation: {{duration: 500, easingFunction: 'easeInOutQuad'}} }})">Fit View</button>
-      <button class="ctrl-btn" id="physics-toggle" onclick="togglePhysics()">Pause</button>
-      <button class="ctrl-btn" onclick="network.moveTo({{scale: network.getScale() * 1.3}})">Zoom In</button>
-      <button class="ctrl-btn" onclick="network.moveTo({{scale: network.getScale() * 0.7}})">Zoom Out</button>
-    </div>
-
     <div class="graph-legend">
       <div class="legend-item"><span class="dot" style="background:#f59e0b; border: 1.5px solid #b45309;"></span> <b>Rank #1 PageRank</b></div>
       <div class="legend-item"><span class="dot" style="background:#10b981; border: 1.5px solid #047857;"></span> <b>Web Input (Seed)</b></div>
@@ -948,14 +910,6 @@ def generate_citationgraph_vis_html(
         edges.update(resetEdges);
       }}
     }});
-
-    var isPhysicsPaused = false;
-    function togglePhysics() {{
-      isPhysicsPaused = !isPhysicsPaused;
-      network.setOptions({{ physics: {{ enabled: !isPhysicsPaused }} }});
-      var btn = document.getElementById('physics-toggle');
-      btn.innerText = isPhysicsPaused ? 'Resume' : 'Pause';
-    }}
   </script>
 </body>
 </html>"""

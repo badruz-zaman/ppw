@@ -7,15 +7,12 @@ _MODULE_DIR = Path(__file__).resolve().parent
 if str(_MODULE_DIR) not in sys.path:
     sys.path.insert(0, str(_MODULE_DIR))
 
-import matplotlib.pyplot as plt
 import streamlit as st
 import streamlit.components.v1 as components
 
 from crawler_pagerank import (
     crawl_and_build_graph,
     generate_citationgraph_vis_html,
-    render_directed_graph_figure,
-    render_pagerank_barchart,
 )
 
 
@@ -274,45 +271,6 @@ def _apply_custom_css() -> None:
                 -webkit-text-fill-color: #141425 !important;
             }
 
-            /* ── Kartu Hasil Prediksi / Pemenang PageRank ── */
-            .card-result {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                background: #ffffff;
-                border: 1px solid #d5d0c8;
-                border-radius: 8px;
-                padding: 2.0rem 1.6rem;
-                text-align: center;
-                margin: 2rem 0;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            }
-            .result-kicker {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                font-size: 0.82rem !important;
-                font-weight: 700 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 2px !important;
-                color: #777777 !important;
-                margin-bottom: 0.8rem !important;
-            }
-            .result-badge {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                display: inline-block !important;
-                padding: 0.55rem 2.2rem !important;
-                border-radius: 4px !important;
-                font-weight: 700 !important;
-                font-size: 1.55rem !important;
-                letter-spacing: 1.5px !important;
-                color: #ffffff !important;
-                background: #141425 !important;
-            }
-            .result-desc {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                font-size: 0.92rem !important;
-                color: #555555 !important;
-                margin-top: 0.85rem !important;
-                line-height: 1.55 !important;
-            }
-
             /* ── Kotak Metrik Ringkas ── */
             .metric-pill {
                 font-family: 'Consolas', 'Courier New', monospace !important;
@@ -484,25 +442,6 @@ def main() -> None:
     top10_df = result["top10_df"]
     ranking_df = result["ranking_df"]
     edges_df = result["edges_df"]
-    top1_row = top10_df.iloc[0]
-
-    # Kartu Pagerank (Rank 1)
-    st.markdown(
-        f"""
-        <div class="card-result">
-            <div class="result-kicker">Website Paling Penting &bull; Peringkat #1 PageRank</div>
-            <div style="margin: 0.8rem 0;">
-                <span class="result-badge">{top1_row['Website']}</span>
-            </div>
-            <div class="result-desc">
-                Memperoleh skor PageRank tertinggi sebesar <strong>{top1_row['PageRank']:.6f}</strong>
-                ({top1_row['Persentase (%)']:.2f}% bobot otoritas graf), dengan
-                <strong>{top1_row['Link Masuk (In-Degree)']}</strong> tautan masuk dari website lain dalam ekosistem.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
     # 4 Kotak Metrik Ringkas
     m1, m2, m3, m4 = st.columns(4)
@@ -543,53 +482,26 @@ def main() -> None:
         },
     )
 
-    st.markdown("<div style='height: 1.2rem;'></div>", unsafe_allow_html=True)
-    st.markdown("#### Diagram Distribusi Skor PageRank (Top 10)")
-    fig_bar = render_pagerank_barchart(top10_df)
-    st.pyplot(fig_bar, use_container_width=True)
-    plt.close(fig_bar)
-
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
     st.subheader("Visualisasi Graf Berarah Hubungan Antar-Website")
     st.caption("Eksplorasi graf interaktif ala CitationGraph: simpul dapat digeser (drag), di-zoom, di-hover untuk melihat detail skor, dan diklik untuk menyorot tautan terhubung.")
 
-    ctrl_col1, ctrl_col2 = st.columns([3, 1.4])
-    with ctrl_col1:
-        max_vis = min(40, max(5, DG.number_of_nodes()))
-        top_n_vis = st.slider(
-            "Jumlah Simpul Teratas pada Visualisasi Graf:",
-            min_value=min(5, max_vis),
-            max_value=max_vis,
-            value=min(18, max_vis),
-        )
-    with ctrl_col2:
-        st.markdown("<div style='height: 0.25rem;'></div>", unsafe_allow_html=True)
-        graph_view_mode = st.radio(
-            "Mode Graf:",
-            options=["Interaktif (CitationGraph)", "Gambar Statis"],
-            index=0,
-            horizontal=True,
-        )
+    max_vis = min(40, max(5, DG.number_of_nodes()))
+    top_n_vis = st.slider(
+        "Jumlah Simpul Teratas pada Visualisasi Graf:",
+        min_value=min(5, max_vis),
+        max_value=max_vis,
+        value=min(18, max_vis),
+    )
 
-    if graph_view_mode == "Interaktif (CitationGraph)":
-        vis_html = generate_citationgraph_vis_html(
-            DG,
-            result["pagerank"],
-            seed_node=result["seed_node"],
-            top_n=top_n_vis,
-            height=620,
-        )
-        components.html(vis_html, height=640)
-    else:
-        fig = render_directed_graph_figure(
-            DG,
-            result["pagerank"],
-            seed_node=result["seed_node"],
-            top_n=top_n_vis,
-            title=f"Subgraf Berarah Top {top_n_vis} Website — Seed: {result['seed_node']}",
-        )
-        st.pyplot(fig, use_container_width=True)
-        plt.close(fig)
+    vis_html = generate_citationgraph_vis_html(
+        DG,
+        result["pagerank"],
+        seed_node=result["seed_node"],
+        top_n=top_n_vis,
+        height=620,
+    )
+    components.html(vis_html, height=640)
 
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
     tab_all, tab_edges, tab_method = st.tabs([
