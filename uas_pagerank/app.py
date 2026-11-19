@@ -395,7 +395,7 @@ def main() -> None:
     with st.sidebar:
         st.markdown("### Setting")
         max_pages = st.slider(
-            "Maksimal Website Dikunjungi",
+            "Max Pages",
             min_value=8,
             max_value=50,
             value=25,
@@ -403,14 +403,14 @@ def main() -> None:
             help="Jumlah maksimal website yang dikunjungi crawler untuk mengekstrak tautan keluar.",
         )
         max_depth = st.slider(
-            "Kedalaman Penelusuran (BFS Depth)",
+            "Depth",
             min_value=1,
             max_value=3,
             value=2,
             help="Kedalaman penelusuran tautan. Depth >= 2 sangat disarankan agar terbentuk tautan balik dan hubungan silang antar-website.",
         )
         alpha = st.slider(
-            "Damping Factor (alpha)",
+            "Damping Factor",
             min_value=0.50,
             max_value=0.95,
             value=0.85,
