@@ -781,7 +781,6 @@ def generate_citationgraph_vis_html(
       <div class="legend-item"><span class="dot" style="background:#10b981; border: 1.5px solid #047857;"></span> <b>Web Input (Seed)</b></div>
       <div class="legend-item"><span class="dot" style="background:#38bdf8; border: 1.5px solid #0369a1;"></span> <b>Masuk Top 10</b></div>
       <div class="legend-item"><span class="dot" style="background:#cbd5e1; border: 1.5px solid #64748b;"></span> <b>Peringkat #11+</b></div>
-      <div style="margin-top: 4px; font-size: 10px; color: #666666;">Klik simpul untuk highlight koneksinya &bull; Scroll untuk zoom</div>
     </div>
 
     <div id="mynetwork"></div>

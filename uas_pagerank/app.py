@@ -292,16 +292,11 @@ def _apply_custom_css() -> None:
                 margin-top: 0.2rem;
             }
 
-            /* ── Kotak Penjelasan Metodologi ── */
-            .method-box {
-                font-family: 'Consolas', 'Courier New', monospace !important;
-                background: #ffffff;
-                border: 1px solid #e0ddd7;
-                border-radius: 6px;
-                padding: 1.2rem 1.4rem;
-                margin: 0.8rem 0;
-                line-height: 1.7;
-                color: #333333;
+            /* ── Kotak Penjelasan Metodologi & Kontainer Border ── */
+            div[data-testid="stVerticalBlockBorderWrapper"] {
+                background: #ffffff !important;
+                border: 1px solid #e0ddd7 !important;
+                border-radius: 6px !important;
             }
         </style>
         """,
@@ -312,31 +307,37 @@ def _apply_custom_css() -> None:
 def _render_methodology_tab(result: dict, alpha: float) -> None:
     """Tampilkan penjelasan bagaimana hubungan website dibangun dan jejak konvergensi Power Iteration."""
     st.markdown("### Bagaimana Membangun Hubungan Antar-Website?")
-    st.markdown(
-        r"""
-        <div class="method-box">
-        <ol style="margin-bottom: 0; padding-left: 1.2rem;">
-            <li><strong>Input Seed URL:</strong> Pengguna memasukkan sembarang URL website publik awal (portal berita, website kampus, Wikipedia, blog, atau portal kementerian/organisasi).</li>
-            <li><strong>HTTP Request & Penanganan Redirect:</strong> Sistem menghubungi website target via HTTP GET menggunakan User-Agent browser modern dan mencatat domain kanonikal bila terjadi pengalihan (<em>redirect</em>).</li>
-            <li><strong>Ekstraksi Hyperlink (&lt;a href&gt;):</strong> Seluruh tag tautan di dalam dokumen HTML diekstrak dengan <code>BeautifulSoup</code>, dikonversi menjadi URL absolut (<code>urljoin</code>), dan dibersihkan dari fragment (<code>#</code>), link non-HTTP (<code>mailto:</code>, <code>tel:</code>, <code>javascript:</code>), serta file statis (gambar, PDF, video).</li>
-            <li><strong>Normalisasi Node Website:</strong> Target tautan dipetakan menjadi nama simpul graf (berdasarkan <em>Host / Subdomain</em> atau <em>Root Domain</em>), sekaligus menyaring tautan noise (tombol share media sosial, tracker analitik, CDN) jika opsi filter aktif.</li>
-            <li><strong>Crawling Berulang (BFS Multi-Depth):</strong> Sistem mengunjungi website-website tujuan yang ditemukan secara paralel hingga batas kedalaman (<em>depth $\ge 2$</em>). Dari kunjungan berulang ini, tautan balik (<em>backlink</em>) dan tautan silang antar-website berhasil terekstrak sehingga graf keterhubungan benar-benar terjalin.</li>
-            <li><strong>Pembentukan Graf Berarah (DiGraph):</strong> Jika website $A$ memiliki tautan menuju website $B$ ($A \\neq B$), maka ditambahkan sebuah sisi berarah $A \\rightarrow B$.</li>
-            <li><strong>Perhitungan PageRank:</strong> Algoritma PageRank (<em>Power Iteration</em>) dijalankan pada graf berarah hingga konvergen untuk menghitung distribusi bobot otoritas seluruh simpul.</li>
-        </ol>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    with st.container(border=True):
+        st.markdown(
+            r"""
+1. **Input Seed URL:** Pengguna memasukkan sembarang URL website publik awal (portal berita, website kampus, Wikipedia, blog, atau portal kementerian/organisasi).
+2. **HTTP Request & Penanganan Redirect:** Sistem menghubungi website target via HTTP GET menggunakan User-Agent browser modern dan mencatat domain kanonikal bila terjadi pengalihan (*redirect*).
+3. **Ekstraksi Hyperlink (`<a href>`):** Seluruh tag tautan di dalam dokumen HTML diekstrak dengan `BeautifulSoup`, dikonversi menjadi URL absolut (`urljoin`), dan dibersihkan dari fragment (`#`), tautan non-HTTP (`mailto:`, `tel:`, `javascript:`), serta file statis (gambar, PDF, video).
+4. **Normalisasi Node Website:** Target tautan dipetakan menjadi nama simpul graf (berdasarkan *Host / Subdomain* atau *Root Domain*), sekaligus menyaring tautan noise (tombol share media sosial, tracker analitik, CDN) jika opsi filter aktif.
+5. **Crawling Berulang (BFS Multi-Depth):** Sistem mengunjungi website-website tujuan yang ditemukan secara paralel hingga batas kedalaman ($depth \ge 2$). Dari kunjungan berulang ini, tautan balik (*backlink*) dan tautan silang antar-website berhasil terekstrak sehingga graf keterhubungan benar-benar terjalin.
+6. **Pembentukan Graf Berarah (DiGraph):** Jika website $A$ memiliki tautan menuju website $B$ ($A \ne B$), maka ditambahkan sebuah sisi berarah $A \to B$.
+7. **Perhitungan PageRank:** Algoritma PageRank (*Power Iteration*) dijalankan pada graf berarah hingga konvergen untuk menghitung distribusi bobot otoritas seluruh simpul.
+"""
+        )
 
     st.markdown("### Rumus PageRank yang Diterapkan")
-    st.latex(r"PR(i) = \frac{1 - d}{N} + d \sum_{(j,i) \in E} \frac{PR(j)}{D_{out}(j)}")
-    st.caption(
-        f"Keterangan: $d = {alpha:.2f}$ (damping factor), "
-        f"$N = {result['graph'].number_of_nodes()}$ total website yang ditemukan, "
-        f"$E = {result['graph'].number_of_edges()}$ relasi berarah, dan "
-        f"$D_{{out}}(j)$ adalah jumlah tautan keluar dari website $j$."
-    )
+    with st.container(border=True):
+        st.latex(r"PR(i) = \frac{1 - d}{N} + d \sum_{(j,i) \in E} \frac{PR(j)}{D_{\text{out}}(j)}")
+
+        g = result.get("graph")
+        total_nodes = g.number_of_nodes() if g is not None else 0
+        total_edges = g.number_of_edges() if g is not None else 0
+
+        st.markdown(
+            "**Keterangan Variabel & Komponen Rumus:**\n\n"
+            f"- **$PR(i)$** : Skor PageRank (bobot otoritas) dari website $i$.\n"
+            f"- **$d$** : *Damping Factor* ($d = {alpha:.2f}$), probabilitas penelusur terus mengikuti hyperlink web.\n"
+            f"- **$N$** : Jumlah total website unik yang ditemukan dalam graf ($N = {total_nodes}$).\n"
+            r"- **$\frac{1 - d}{N}$** : Bobot dasar minimum (*random teleportation*) yang dibagikan merata ke seluruh simpul agar surfer tidak terjebak di halaman buntu (*dead end*)." + "\n"
+            f"- **$E$** : Himpunan seluruh relasi tautan berarah antar-website ($|E| = {total_edges}$).\n"
+            r"- **$D_{\text{out}}(j)$** : *Out-degree* (jumlah seluruh tautan keluar) dari website $j$." + "\n"
+            r"- **$\sum_{(j,i) \in E} \frac{PR(j)}{D_{\text{out}}(j)}$** : Akumulasi transfer bobot dari setiap website $j$ yang mereferensikan atau memiliki tautan masuk (*in-link*) menuju website $i$."
+        )
 
     trace = result.get("power_trace", [])
     if trace:
