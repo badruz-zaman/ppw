@@ -5,3 +5,9 @@ scikit-learn==1.6.1
 joblib
 pandas
 numpy<2.0
+requests
+beautifulsoup4
+lxml
+networkx
+scipy
+matplotlib
