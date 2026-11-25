@@ -32,8 +32,11 @@ def _apply_custom_css() -> None:
                 -webkit-font-smoothing: antialiased;
             }
 
+            header[data-testid="stHeader"],
             [data-testid="stHeader"] {
-                background: transparent !important;
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
             }
 
             /* Sembunyikan tombol collapse sidebar agar tidak muncul teks 'key' */
